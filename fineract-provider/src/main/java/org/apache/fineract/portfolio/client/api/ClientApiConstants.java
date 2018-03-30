@@ -29,6 +29,7 @@ public class ClientApiConstants {
     public static final String CLIENT_RESOURCE_NAME = "client";
     public static final String CLIENT_CHARGES_RESOURCE_NAME = "CLIENTCHARGE";
 
+
     // Client Charge Action Names
     public static final String CLIENT_CHARGE_ACTION_CREATE = "CREATE";
     public static final String CLIENT_CHARGE_ACTION_DELETE = "DELETE";
@@ -69,6 +70,11 @@ public class ClientApiConstants {
     public static final String localeParamName = "locale";
     public static final String dateFormatParamName = "dateFormat";
     public static final String address = "address";
+    public static final String familyMembers = "familyMembers";
+    public static final String MARITALSTATUS="MARITALSTATUS";
+    public static final String maritalStatusIdParamName="maritalStatusId";
+    
+    
     
     public static final String CLIENT_TYPE_INDIVIDUAL = "Individual";
 
@@ -78,6 +84,7 @@ public class ClientApiConstants {
     public static final String accountNoParamName = "accountNo";
     public static final String externalIdParamName = "externalId";
     public static final String mobileNoParamName = "mobileNo";
+	public static final String emailAddressParamName = "emailAddress";
     public static final String firstnameParamName = "firstname";
     public static final String middlenameParamName = "middlename";
     public static final String lastnameParamName = "lastname";
@@ -189,7 +196,7 @@ public class ClientApiConstants {
     protected static final Set<String> CLIENT_RESPONSE_DATA_PARAMETERS = new HashSet<>(Arrays.asList(idParamName,
             accountNoParamName,
             externalIdParamName, statusParamName, activeParamName, activationDateParamName, firstnameParamName, middlenameParamName,
-            lastnameParamName, fullnameParamName, displayNameParamName, mobileNoParamName, officeIdParamName, officeNameParamName,
+            lastnameParamName, fullnameParamName, displayNameParamName, mobileNoParamName, emailAddressParamName, officeIdParamName, officeNameParamName,
             transferToOfficeIdParamName, transferToOfficeNameParamName, hierarchyParamName, imageIdParamName, imagePresentParamName,
             staffIdParamName, staffNameParamName, timelineParamName, groupsParamName, officeOptionsParamName, staffOptionsParamName,
             dateOfBirthParamName, genderParamName, clientTypeParamName, clientClassificationParamName, legalFormParamName, 
