@@ -232,11 +232,21 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                         	Group group= this.groupRepository.findOneWithNotFoundDetection(groupId);
                             officeSpecificLoanProductValidation( productId,group.getOffice().getId());
                         }
-            
+                       
+           
             this.fromApiJsonDeserializer.validateForCreate(command.json(), isMeetingMandatoryForJLGLoans, loanProduct);
 
             final List<ApiParameterError> dataValidationErrors = new ArrayList<>();
             final DataValidatorBuilder baseDataValidator = new DataValidatorBuilder(dataValidationErrors).resource("loan");
+            
+            if (loanProduct.isIncludeInBorrowerCycle()) {
+               
+                final Integer cycleNumber = this.loanReadPlatformService.retriveLoanCounter(clientId, loanProduct.getId());
+                if (cycleNumber > 0) {
+                    throw new GeneralPlatformDomainRuleException("The client cannot apply for more then one loan","The client cannot apply for more then one loan");
+                }
+           
+            }
 
             if (loanProduct.useBorrowerCycle()) {
                 Integer cycleNumber = 0;
