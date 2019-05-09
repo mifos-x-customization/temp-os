@@ -240,10 +240,24 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final DataValidatorBuilder baseDataValidator = new DataValidatorBuilder(dataValidationErrors).resource("loan");
             
             if (loanProduct.isIncludeInBorrowerCycle()) {
-               
+               // check if the client has issued a loan and if its closed then allow to create the same or else dont
                 final Integer cycleNumber = this.loanReadPlatformService.retriveLoanCounter(clientId, loanProduct.getId());
                 if (cycleNumber > 0) {
-                    throw new GeneralPlatformDomainRuleException("The client cannot apply for more then one loan","The client cannot apply for more then one loan");
+                    final List<Loan> loans = this.loanRepositoryWrapper.findLoanByClientId(clientId);
+                    
+                    for (final Loan loan: loans) {
+                        if(loanProduct.getPrincipalAmount().isEqualTo(loan.getPrincpal())) {
+                           // Current loan check with principal
+                           if (!loan.isClosed()) {
+                               this.logger.info("Do not allow to create the loan");
+                               throw new GeneralPlatformDomainRuleException("This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account", "This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account" );
+                           }
+                           
+                          
+                        }
+                        
+                    }                
+                   
                 }
            
             }
