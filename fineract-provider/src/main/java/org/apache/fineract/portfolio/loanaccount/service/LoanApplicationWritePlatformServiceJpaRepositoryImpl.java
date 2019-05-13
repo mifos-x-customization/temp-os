@@ -243,18 +243,13 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                // check if the client has issued a loan and if its closed then allow to create the same or else dont
               
                     final List<Loan> loans = this.loanRepositoryWrapper.findLoanByClientId(clientId);
-                    
                     for (final Loan loan: loans) {
-                     
                            // Current loan check with principal
                            if (loan.isOpen()) {
                                this.logger.info("Do not allow to create the loan");
-                               throw new GeneralPlatformDomainRuleException("This client has currently  active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account", "This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account" );
-                           }
-                           
-                          
-                        
-                        
+                               throw new GeneralPlatformDomainRuleException("This client has currently  active loan "  + loan.getAccountNumber() +  " once  its closed you can open a new loan account", "This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account" );
+                           }                       
+                       
                     }                
                    
                 

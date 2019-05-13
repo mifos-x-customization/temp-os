@@ -29,6 +29,7 @@ import java.util.Set;
 
 import com.google.gson.JsonArray;
 import org.apache.commons.lang.StringUtils;
+import org.apache.fineract.infrastructure.configuration.service.ConfigurationReadPlatformService;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
 import org.apache.fineract.infrastructure.core.data.DataValidatorBuilder;
@@ -49,10 +50,13 @@ import com.google.gson.reflect.TypeToken;
 public final class ClientDataValidator {
 
     private final FromJsonHelper fromApiJsonHelper;
+    private final ConfigurationReadPlatformService configurationReadPlatformService;
+    
 
     @Autowired
-    public ClientDataValidator(final FromJsonHelper fromApiJsonHelper) {
+    public ClientDataValidator(final FromJsonHelper fromApiJsonHelper, final ConfigurationReadPlatformService configurationReadPlatformService) {
         this.fromApiJsonHelper = fromApiJsonHelper;
+        this.configurationReadPlatformService = configurationReadPlatformService;
     }
 
     public void validateForCreate(final String json) {
@@ -215,6 +219,12 @@ public final class ClientDataValidator {
 		if (this.fromApiJsonHelper.parameterExists("isStaff", element)) {
             final Boolean isStaffFlag = this.fromApiJsonHelper.extractBooleanNamed("isStaff", element);
             baseDataValidator.reset().parameter("isStaff").value(isStaffFlag).notNull();
+        }
+		
+		if(this.configurationReadPlatformService
+                        .retrieveGlobalConfiguration("Enable-Address").isEnabled()){
+            final JsonArray address =this.fromApiJsonHelper.extractJsonArrayNamed(ClientApiConstants.address, element);
+            baseDataValidator.reset().parameter(ClientApiConstants.address).value(address).notNull().jsonArrayNotEmpty();
         }
 		
         List<ApiParameterError> dataValidationErrorsForClientNonPerson = getDataValidationErrorsForCreateOnClientNonPerson(element.getAsJsonObject().get(ClientApiConstants.clientNonPersonDetailsParamName));

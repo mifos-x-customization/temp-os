@@ -130,7 +130,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         final Boolean isAddressEnabled=configuration.isEnabled(); 
         if(isAddressEnabled)
         {
-        	 address = this.addressReadPlatformService.retrieveTemplate();
+                 address = this.addressReadPlatformService.retrieveTemplate();
         }
         
         final ClientFamilyMembersData familyMemberOptions=this.clientFamilyMembersReadPlatformService.retrieveTemplate();
@@ -169,8 +169,9 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
 
         return ClientData.template(defaultOfficeId, new LocalDate(), offices, staffOptions, null, genderOptions, savingsProductDatas,
                 clientTypeOptions, clientClassificationOptions, clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions,
-                clientLegalFormOptions,familyMemberOptions,address,isAddressEnabled, datatableTemplates);
-    }
+                                clientLegalFormOptions, familyMemberOptions, new ArrayList<AddressData>(Arrays.asList(address)),
+                                isAddressEnabled, datatableTemplates);
+        }
 
     @Override
    // @Transactional(readOnly=true)
@@ -245,33 +246,33 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         if (externalId != null) {
-        	paramList.add(ApiParameterHelper.sqlEncodeString(externalId));
+                paramList.add(ApiParameterHelper.sqlEncodeString(externalId));
             extraCriteria += " and c.external_id like ? " ;
         }
 
         if (displayName != null) {
             //extraCriteria += " and concat(ifnull(c.firstname, ''), if(c.firstname > '',' ', '') , ifnull(c.lastname, '')) like "
-        	paramList.add("%" + displayName + "%");
-        	extraCriteria += " and c.display_name like ? ";
+                paramList.add("%" + displayName + "%");
+                extraCriteria += " and c.display_name like ? ";
         }
 
         if (firstname != null) {
-        	paramList.add(ApiParameterHelper.sqlEncodeString(firstname));
+                paramList.add(ApiParameterHelper.sqlEncodeString(firstname));
             extraCriteria += " and c.firstname like ? " ;
         }
 
         if (lastname != null) {
-        	paramList.add(ApiParameterHelper.sqlEncodeString(lastname));
+                paramList.add(ApiParameterHelper.sqlEncodeString(lastname));
             extraCriteria += " and c.lastname like ? ";
         }
 
         if (searchParameters.isScopedByOfficeHierarchy()) {
-        	paramList.add(ApiParameterHelper.sqlEncodeString(searchParameters.getHierarchy() + "%"));
+                paramList.add(ApiParameterHelper.sqlEncodeString(searchParameters.getHierarchy() + "%"));
             extraCriteria += " and o.hierarchy like ? ";
         }
         
         if(searchParameters.isOrphansOnly()){
-        	extraCriteria += " and c.id NOT IN (select client_id from m_group_client) ";
+                extraCriteria += " and c.id NOT IN (select client_id from m_group_client) ";
         }
 
         if (StringUtils.isNotBlank(extraCriteria)) {
@@ -364,8 +365,8 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             sqlBuilder.append("c.firstname as firstname, c.middlename as middlename, c.lastname as lastname, ");
             sqlBuilder.append("c.fullname as fullname, c.display_name as displayName, ");
             sqlBuilder.append("c.mobile_no as mobileNo, ");
-			sqlBuilder.append("c.is_staff as isStaff, ");
-			sqlBuilder.append("c.email_address as emailAddress, ");
+                        sqlBuilder.append("c.is_staff as isStaff, ");
+                        sqlBuilder.append("c.email_address as emailAddress, ");
             sqlBuilder.append("c.date_of_birth as dateOfBirth, ");
             sqlBuilder.append("c.gender_cv_id as genderId, ");
             sqlBuilder.append("cv.code_value as genderValue, ");
@@ -427,7 +428,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         @Override
-        public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {
+        public ClientData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
             final String accountNo = rs.getString("accountNo");
 
@@ -454,8 +455,8 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final String displayName = rs.getString("displayName");
             final String externalId = rs.getString("externalId");
             final String mobileNo = rs.getString("mobileNo");
-			final boolean isStaff = rs.getBoolean("isStaff");
-			final String emailAddress = rs.getString("emailAddress");
+                        final boolean isStaff = rs.getBoolean("isStaff");
+                        final String emailAddress = rs.getString("emailAddress");
             final LocalDate dateOfBirth = JdbcSupport.getLocalDate(rs, "dateOfBirth");
             final Long genderId = JdbcSupport.getLong(rs, "genderId");
             final String genderValue = rs.getString("genderValue");
@@ -496,7 +497,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final Integer legalFormEnum = JdbcSupport.getInteger(rs, "legalFormEnum");
             EnumOptionData legalForm = null;
             if(legalFormEnum != null)
-            		legalForm = ClientEnumerations.legalForm(legalFormEnum);
+                        legalForm = ClientEnumerations.legalForm(legalFormEnum);
             
             final Long constitutionId = JdbcSupport.getLong(rs, "constitutionId");
             final String constitutionValue = rs.getString("constitutionValue");
@@ -550,8 +551,8 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             builder.append("c.firstname as firstname, c.middlename as middlename, c.lastname as lastname, ");
             builder.append("c.fullname as fullname, c.display_name as displayName, ");
             builder.append("c.mobile_no as mobileNo, ");
-			builder.append("c.is_staff as isStaff, ");
-			builder.append("c.email_address as emailAddress, ");
+                        builder.append("c.is_staff as isStaff, ");
+                        builder.append("c.email_address as emailAddress, ");
             builder.append("c.date_of_birth as dateOfBirth, ");
             builder.append("c.gender_cv_id as genderId, ");
             builder.append("cv.code_value as genderValue, ");
@@ -612,7 +613,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         @Override
-        public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {
+        public ClientData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
             final String accountNo = rs.getString("accountNo");
 
@@ -639,8 +640,8 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final String displayName = rs.getString("displayName");
             final String externalId = rs.getString("externalId");
             final String mobileNo = rs.getString("mobileNo");
-			final boolean isStaff = rs.getBoolean("isStaff");
-			final String emailAddress = rs.getString("emailAddress");
+                        final boolean isStaff = rs.getBoolean("isStaff");
+                        final String emailAddress = rs.getString("emailAddress");
             final LocalDate dateOfBirth = JdbcSupport.getLocalDate(rs, "dateOfBirth");
             final Long genderId = JdbcSupport.getLong(rs, "genderId");
             final String genderValue = rs.getString("genderValue");
@@ -680,7 +681,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final Integer legalFormEnum = JdbcSupport.getInteger(rs, "legalFormEnum");
             EnumOptionData legalForm = null;
             if(legalFormEnum != null)
-            		legalForm = ClientEnumerations.legalForm(legalFormEnum);
+                        legalForm = ClientEnumerations.legalForm(legalFormEnum);
             
             final Long constitutionId = JdbcSupport.getLong(rs, "constitutionId");
             final String constitutionValue = rs.getString("constitutionValue");
@@ -714,7 +715,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         @Override
-        public GroupGeneralData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {
+        public GroupGeneralData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
             final Long groupId = JdbcSupport.getLong(rs, "groupId");
             final String groupName = rs.getString("groupName");
@@ -744,7 +745,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         @Override
-        public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {
+        public ClientData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
             final Long id = rs.getLong("id");
             final String displayName = rs.getString("displayName");
@@ -778,7 +779,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
 
         @Override
-        public ClientData mapRow(final ResultSet rs, @SuppressWarnings("unused") final int rowNum) throws SQLException {
+        public ClientData mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
             final Long id = rs.getLong("id");
             final String accountNo = rs.getString("accountNo");
@@ -813,7 +814,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         final Collection<CodeValueData> clientNonPersonMainBusinessLineOptions = null;
         final List<EnumOptionData> clientLegalFormOptions = null;
         return ClientData.template(null, null, null, null, narrations, null, null, clientTypeOptions, clientClassificationOptions, 
-        		clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions, clientLegalFormOptions,null,null,null, null);
+                        clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions, clientLegalFormOptions,null,null,null, null);
     }
 
 }
