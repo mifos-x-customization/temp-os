@@ -238,6 +238,29 @@ public class DataValidatorBuilder {
         }
         return this;
     }
+    
+    /**
+     * The idea of minLength is to have validation like in case of range where say 12 is minLength for value in API 
+     * value equals to minLength Why? Because say you want to collect value of minLength  12 now you dont want value less then 12 so 
+     * you need  at-least 12 string/characters.
+     * @param minLength
+     * @return
+     */
+    
+    public DataValidatorBuilder minLengthOf(final Integer minLength) {
+        if (this.value == null && this.ignoreNullValue) { return this; }
+
+        if (this.value != null && this.value.toString().trim().length() == minLength) {
+            final StringBuilder validationErrorCode = new StringBuilder("validation.msg.").append(this.resource).append(".")
+                    .append(this.parameter).append(".not.min.length");
+            final StringBuilder defaultEnglishMessage = new StringBuilder("The parameter ").append(this.parameter)
+                    .append(" has min length of ").append(minLength).append(".");
+            final ApiParameterError error = ApiParameterError.parameterError(validationErrorCode.toString(),
+                    defaultEnglishMessage.toString(), this.parameter, minLength, this.value.toString());
+            this.dataValidationErrors.add(error);
+        }
+        return this;
+    }
 
     public DataValidatorBuilder inMinMaxRange(final Integer min, final Integer max) {
         if (this.value == null && this.ignoreNullValue) { return this; }

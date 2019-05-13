@@ -183,7 +183,7 @@ public class ClientHelper {
         map.put("officeId", officeId);
         map.put("firstname", Utils.randomNameGenerator("Client_FirstName_", 5));
         map.put("lastname", Utils.randomNameGenerator("Client_LastName_", 4));
-        map.put("externalId", randomIDGenerator("ID_", 7));
+        map.put("externalId", randomIDGenerator("ID_", 12));
         map.put("dateFormat", DATE_FORMAT);
 		map.put("locale", "en");
 		map.put("active", "true");
@@ -197,7 +197,7 @@ public class ClientHelper {
         map.put("officeId", officeId);
         map.put("firstname", Utils.randomNameGenerator("Client_FirstName_", 5));
         map.put("lastname", Utils.randomNameGenerator("Client_LastName_", 4));
-        map.put("externalId", randomIDGenerator("ID_", 7));
+        map.put("externalId", randomIDGenerator("ID_", 13));
         map.put("dateFormat", DATE_FORMAT);
 		map.put("locale", "en");
 		map.put("active", "false");

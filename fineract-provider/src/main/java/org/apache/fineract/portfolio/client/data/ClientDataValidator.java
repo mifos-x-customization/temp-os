@@ -152,7 +152,7 @@ public final class ClientDataValidator {
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.externalIdParamName, element)) {
             final String externalId = this.fromApiJsonHelper.extractStringNamed(ClientApiConstants.externalIdParamName, element);
             baseDataValidator.reset().parameter(ClientApiConstants.externalIdParamName).value(externalId).notNull()
-                    .notExceedingLengthOf(12);
+                    .notExceedingLengthOf(12).minLengthOf(12);
         }
 
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.mobileNoParamName, element)) {
