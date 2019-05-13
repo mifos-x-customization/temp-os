@@ -165,7 +165,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     worksheet.setColumnWidth(ClientPersonConstants.LOOKUP_COUNTRY_COL,TemplatePopulateImportConstants.SMALL_COL_SIZE);
     writeString(ClientPersonConstants.OFFICE_NAME_COL, rowHeader, "Office Name*");
     writeString(ClientPersonConstants.STAFF_NAME_COL, rowHeader, "Staff Name");
-    writeString(ClientPersonConstants.EXTERNAL_ID_COL, rowHeader, "External ID ");
+    writeString(ClientPersonConstants.EXTERNAL_ID_COL, rowHeader, "Aadhar  Card* ");
     writeString(ClientPersonConstants.SUBMITTED_ON_COL,rowHeader,"Submitted On Date");
     writeString(ClientPersonConstants.ACTIVATION_DATE_COL, rowHeader, "Activation date");
     writeString(ClientPersonConstants.ACTIVE_COL, rowHeader, "Active*");

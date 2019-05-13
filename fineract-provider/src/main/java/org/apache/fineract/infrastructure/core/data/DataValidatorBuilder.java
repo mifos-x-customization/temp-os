@@ -250,7 +250,7 @@ public class DataValidatorBuilder {
     public DataValidatorBuilder minLengthOf(final Integer minLength) {
         if (this.value == null && this.ignoreNullValue) { return this; }
 
-        if (this.value != null && this.value.toString().trim().length() == minLength) {
+        if (this.value != null && this.value.toString().trim().length() < minLength) {
             final StringBuilder validationErrorCode = new StringBuilder("validation.msg.").append(this.resource).append(".")
                     .append(this.parameter).append(".not.min.length");
             final StringBuilder defaultEnglishMessage = new StringBuilder("The parameter ").append(this.parameter)
