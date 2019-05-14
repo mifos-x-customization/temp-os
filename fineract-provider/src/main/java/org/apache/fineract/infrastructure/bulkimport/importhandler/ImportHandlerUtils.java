@@ -80,12 +80,7 @@ public class ImportHandlerUtils {
     public static String readAsString(int colIndex, Row row) {
 
         Cell c = row.getCell(colIndex);
-        // For external ID
-        if(colIndex ==  5) {
-           c.setCellType(1);
-          
-        }
-        
+      
         if (c == null || c.getCellType() == Cell.CELL_TYPE_BLANK)
             return null;
         FormulaEvaluator eval = row.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
@@ -116,6 +111,23 @@ public class ImportHandlerUtils {
         }else {
             return null;
         }
+    }
+    
+    public static String  readExternalID(int colIndex, Row row) {
+        Cell c = row.getCell(colIndex);
+        // For external ID
+        if(colIndex ==  5) {
+           c.setCellType(1);
+          
+        }
+        
+        if(c.getCellType()==Cell.CELL_TYPE_STRING) {
+            String res = trimEmptyDecimalPortion(c.getStringCellValue().trim());
+            return res.trim();
+            
+        }
+        return null;
+        
     }
 
 

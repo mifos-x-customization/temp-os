@@ -88,7 +88,7 @@ public class ClientPersonImportHandler implements ImportHandler {
         Long officeId = ImportHandlerUtils.getIdByName(workbook.getSheet(TemplatePopulateImportConstants.OFFICE_SHEET_NAME), officeName);
         String staffName = ImportHandlerUtils.readAsString(ClientPersonConstants.STAFF_NAME_COL, row);
         Long staffId = ImportHandlerUtils.getIdByName(workbook.getSheet(TemplatePopulateImportConstants.STAFF_SHEET_NAME), staffName);
-        String externalId = ImportHandlerUtils.readAsString(ClientPersonConstants.EXTERNAL_ID_COL, row);
+        String externalId = ImportHandlerUtils.readExternalID(ClientPersonConstants.EXTERNAL_ID_COL, row);
         LocalDate submittedOn=ImportHandlerUtils.readAsDate(ClientPersonConstants.SUBMITTED_ON_COL,row);
         LocalDate activationDate = ImportHandlerUtils.readAsDate(ClientPersonConstants.ACTIVATION_DATE_COL, row);
         Boolean active = ImportHandlerUtils.readAsBoolean(ClientPersonConstants.ACTIVE_COL, row);
