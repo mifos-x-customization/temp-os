@@ -80,6 +80,12 @@ public class ImportHandlerUtils {
     public static String readAsString(int colIndex, Row row) {
 
         Cell c = row.getCell(colIndex);
+        // For external ID
+        if(colIndex ==  5) {
+           c.setCellType(1);
+          
+        }
+        
         if (c == null || c.getCellType() == Cell.CELL_TYPE_BLANK)
             return null;
         FormulaEvaluator eval = row.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
