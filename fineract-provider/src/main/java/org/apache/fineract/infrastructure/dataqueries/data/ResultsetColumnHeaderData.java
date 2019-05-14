@@ -83,7 +83,10 @@ public final class ResultsetColumnHeaderData {
                 displayType = "DATETIME";
             } else if (isDecimal()) {
                 displayType = "DECIMAL";
-            } else if (isAnyText()) {
+            } else if (isDecimalUnsigned()){
+                displayType = "DECIMAL UNSIGNED";
+            }
+              else if (isAnyText()) {
                 displayType = "TEXT";
             } else if (isBit()) {
                 displayType = "BOOLEAN";
@@ -160,6 +163,10 @@ public final class ResultsetColumnHeaderData {
     private boolean isDecimal() {
         return "decimal".equalsIgnoreCase(this.columnType) || "NEWDECIMAL".equalsIgnoreCase(this.columnType);
         // Refer org.drizzle.jdbc.internal.mysql.MySQLType.java
+    }
+    
+    private boolean isDecimalUnsigned() {
+        return "decimal unsigned".equalsIgnoreCase(this.columnType);
     }
 
     private boolean isDate() {
