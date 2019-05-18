@@ -81,6 +81,10 @@ public class Address extends AbstractPersistableCustom<Long> {
 	@ManyToOne
 	@JoinColumn(name = "country_id")
 	private CodeValue country;
+	
+	@ManyToOne
+	@JoinColumn(name = "residence_id")
+	private CodeValue residenceType;
 
 	@Column(name = "postal_code")
 	private String postalCode;
@@ -105,7 +109,7 @@ public class Address extends AbstractPersistableCustom<Long> {
 
 	private Address(final String street, final String addressLine1, final String addressLine2,
 			final String addressLine3, final String townVillage, final String city, final String countyDistrict,
-			final CodeValue stateProvince, final CodeValue country, final String postalCode, final BigDecimal latitude,
+			final CodeValue stateProvince, final CodeValue country, final CodeValue residenceType, final String postalCode, final BigDecimal latitude,
 			final BigDecimal longitude, final String createdBy, final LocalDate createdOn, final String updatedBy,
 			final LocalDate updatedOn) {
 		this.street = street;
@@ -117,6 +121,7 @@ public class Address extends AbstractPersistableCustom<Long> {
 		this.countyDistrict = countyDistrict;
 		this.stateProvince = stateProvince;
 		this.country = country;
+		this.residenceType = residenceType;
 		this.postalCode = postalCode;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -140,7 +145,7 @@ public class Address extends AbstractPersistableCustom<Long> {
 
 	}
 
-	public static Address fromJson(final JsonCommand command, final CodeValue stateProvince, final CodeValue country) {
+	public static Address fromJson(final JsonCommand command, final CodeValue stateProvince, final CodeValue country, final CodeValue residenceType) {
 
 		final String street = command.stringValueOfParameterNamed("street");
 
@@ -173,11 +178,11 @@ public class Address extends AbstractPersistableCustom<Long> {
 		
 
 		return new Address(street, addressLine1, addressLine2, addressLine3, townVillage, city, countyDistrict,
-				stateProvince, country, postalCode, latitude, longitude, createdBy, createdOn, updatedBy, updatedOn);
+				stateProvince, country, residenceType, postalCode, latitude, longitude, createdBy, createdOn, updatedBy, updatedOn);
 	}
 
 	public static Address fromJsonObject(final JsonObject jsonObject, final CodeValue state_province,
-			final CodeValue country) {
+			final CodeValue country, final CodeValue residenceType) {
 		String street = "";
 		String addressLine1 = "";
 		String addressLine2 = "";
@@ -250,7 +255,7 @@ public class Address extends AbstractPersistableCustom<Long> {
 		}
 
 		return new Address(street, addressLine1, addressLine2, addressLine3, townVillage, city, countyDistrict,
-				state_province, country, postalCode, latitude, longitude, createdBy, createdOnDate, updatedBy,
+				state_province, country, residenceType, postalCode, latitude, longitude, createdBy, createdOnDate, updatedBy,
 				updatedOnDate);
 	}
 
@@ -332,6 +337,14 @@ public class Address extends AbstractPersistableCustom<Long> {
 
 	public void setCountry(CodeValue country) {
 		this.country = country;
+	}
+	
+	public CodeValue getResidenceType() {
+	    return this.residenceType;
+	}
+	
+	public void setResidenceType(CodeValue residenceType) {
+	    this.residenceType = residenceType;
 	}
 
 	public String getPostalCode() {

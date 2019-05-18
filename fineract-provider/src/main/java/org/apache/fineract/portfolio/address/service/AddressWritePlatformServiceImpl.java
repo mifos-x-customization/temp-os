@@ -37,6 +37,7 @@ import org.apache.fineract.portfolio.client.domain.ClientRepositoryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.mustachejava.Code;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -71,8 +72,10 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
                         final JsonCommand command) {
                 CodeValue stateIdobj = null;
                 CodeValue countryIdObj = null;
+                CodeValue residenceObj = null;
                 long stateId;
                 long countryId;
+                long residenceId;
 
                 this.context.authenticatedUser();
                 this.fromApiJsonDeserializer.validateForCreate(command.json(), true);
@@ -86,11 +89,16 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
                         countryId = command.longValueOfParameterNamed("countryId");
                         countryIdObj = this.codeValueRepository.getOne(countryId);
                 }
+                
+                if (command.longValueOfParameterNamed("residenceTypeId") !=null) {
+                    residenceId = command.longValueOfParameterNamed("residenceTypeId");
+                    residenceObj = this.codeValueRepository.getOne(residenceId);
+                }
 
                 final CodeValue addressTypeIdObj = this.codeValueRepository.getOne(addressTypeId);
 
-                final Address add = Address.fromJson(command, stateIdobj, countryIdObj);
-                this.addressRepository.save(add);
+                final Address add = Address.fromJson(command, stateIdobj, countryIdObj, residenceObj);
+                this.addressRepository.save(add); 
                 final Long addressid = add.getId();
                 final Address addobj = this.addressRepository.getOne(addressid);
 
@@ -111,8 +119,10 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
         public CommandProcessingResult addNewClientAddress(final Client client, final JsonCommand command) {
                 CodeValue stateIdobj = null;
                 CodeValue countryIdObj = null;
+                CodeValue residenceIdObj = null;
                 long stateId;
                 long countryId;
+                long residenceTypeId;
                 ClientAddress clientAddressobj = new ClientAddress();
                 final JsonArray addressArray = command.arrayOfParameterNamed("address");
                 
@@ -132,11 +142,16 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
                                         countryId = jsonObject.get("countryId").getAsLong();
                                         countryIdObj = this.codeValueRepository.getOne(countryId);
                                 }
+                                if (jsonObject.get("residenceTypeId") != null) {
+                                    residenceTypeId = jsonObject.get("residenceTypeId").getAsLong();
+                                    residenceIdObj = this.codeValueRepository.getOne(residenceTypeId);
+                                    
+                                }
 
                                 final long addressTypeId = jsonObject.get("addressTypeId").getAsLong();
                                 final CodeValue addressTypeIdObj = this.codeValueRepository.getOne(addressTypeId);
 
-                                final Address add = Address.fromJsonObject(jsonObject, stateIdobj, countryIdObj);
+                                final Address add = Address.fromJsonObject(jsonObject, stateIdobj, countryIdObj, residenceIdObj);
                                 this.addressRepository.save(add);
                                 final Long addressid = add.getId();
                                 final Address addobj = this.addressRepository.getOne(addressid);
@@ -166,10 +181,14 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
                 long stateId;
 
                 long countryId;
+                
+                long residenceTypeId;
 
                 CodeValue stateIdobj;
 
                 CodeValue countryIdObj;
+                
+                CodeValue residenceIdObj;
 
                 boolean is_address_update = false;
 
@@ -249,6 +268,15 @@ public class AddressWritePlatformServiceImpl implements AddressWritePlatformServ
                         }
 
                 }
+                if ((command.longValueOfParameterNamed("residenceTypeId") != null)) {
+                    if ((command.longValueOfParameterNamed("residenceTypeId") != 0)) {
+                            is_address_update = true;
+                            residenceTypeId = command.longValueOfParameterNamed("residenceTypeId");
+                            residenceIdObj = this.codeValueRepository.getOne(residenceTypeId);
+                            addobj.setCountry(residenceIdObj);
+                    }
+
+            }
 
                 if (!(command.stringValueOfParameterNamed("postalCode").isEmpty())) {
                         is_address_update = true;

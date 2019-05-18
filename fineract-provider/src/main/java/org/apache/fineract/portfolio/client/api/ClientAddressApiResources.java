@@ -55,7 +55,7 @@ import org.springframework.stereotype.Component;
 public class ClientAddressApiResources {
 	private final Set<String> RESPONSE_DATA_PARAMETERS = new HashSet<>(Arrays.asList("addressId", "street",
 			"addressLine1", "addressLine2", "addressLine3", "townVillage", "city", "countyDistrict", "stateProvinceId",
-			"countryId", "postalCode", "latitude", "longitude", "createdBy", "createdOn", "updatedBy", "updatedOn",
+			"countryId","residenceTypeId", "postalCode", "latitude", "longitude", "createdBy", "createdOn", "updatedBy", "updatedOn",
 			"clientAddressId", "client_id", "address_id", "address_type_id", "isActive", "fieldConfigurationId",
 			"entity", "table", "field", "is_enabled", "is_mandatory", "validation_regex"));
 	private final String resourceNameForPermissions = "Address";

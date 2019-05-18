@@ -54,8 +54,10 @@ import org.apache.fineract.organisation.staff.domain.StaffRepositoryWrapper;
 import org.apache.fineract.portfolio.address.service.AddressWritePlatformService;
 import org.apache.fineract.portfolio.client.api.ClientApiConstants;
 import org.apache.fineract.portfolio.client.data.ClientDataValidator;
+import org.apache.fineract.portfolio.client.data.ClientIdentifierData;
 import org.apache.fineract.portfolio.client.domain.AccountNumberGenerator;
 import org.apache.fineract.portfolio.client.domain.Client;
+import org.apache.fineract.portfolio.client.domain.ClientIdentifierRepository;
 import org.apache.fineract.portfolio.client.domain.ClientNonPerson;
 import org.apache.fineract.portfolio.client.domain.ClientNonPersonRepositoryWrapper;
 import org.apache.fineract.portfolio.client.domain.ClientRepositoryWrapper;
@@ -95,7 +97,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 @Service
 public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWritePlatformService {
@@ -125,6 +129,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
     private final ClientFamilyMembersWritePlatformService clientFamilyMembersWritePlatformService;
     private final BusinessEventNotifierService businessEventNotifierService;
     private final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService;
+    private final ClientIdentifierWritePlatformService clientIdentifierRepo;
     @Autowired
     public ClientWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
             final ClientRepositoryWrapper clientRepository, final ClientNonPersonRepositoryWrapper clientNonPersonRepository,
@@ -138,7 +143,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository, final FromJsonHelper fromApiJsonHelper,
             final ConfigurationReadPlatformService configurationReadPlatformService,
             final AddressWritePlatformService addressWritePlatformService, final ClientFamilyMembersWritePlatformService clientFamilyMembersWritePlatformService, final BusinessEventNotifierService businessEventNotifierService,
-            final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService) {
+            final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService, final ClientIdentifierWritePlatformService clientIdentifierRepo ) {
         this.context = context;
         this.clientRepository = clientRepository;
         this.clientNonPersonRepository = clientNonPersonRepository;
@@ -162,6 +167,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
         this.clientFamilyMembersWritePlatformService=clientFamilyMembersWritePlatformService;
         this.businessEventNotifierService = businessEventNotifierService;
         this.entityDatatableChecksWritePlatformService = entityDatatableChecksWritePlatformService;
+        this.clientIdentifierRepo = clientIdentifierRepo;
     }
 
     @Transactional
@@ -239,7 +245,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final Office clientOffice = this.officeRepositoryWrapper.findOneWithNotFoundDetection(officeId);
 
             final Long groupId = command.longValueOfParameterNamed(ClientApiConstants.groupIdParamName);
-
+            
+            
             Group clientParentGroup = null;
             if (groupId != null) {
                 clientParentGroup = this.groupRepository.findOne(groupId);
@@ -328,6 +335,19 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             	
             if (isAddressEnabled) {
                 this.addressWritePlatformService.addNewClientAddress(newClient, command);
+            }
+            
+            if (command.arrayOfParameterNamed("identifier") != null) {
+                JsonElement element = this.fromApiJsonHelper.parse(command.json());
+                final JsonArray jsonArrays = this.fromApiJsonHelper.extractJsonArrayNamed("identifier", element);
+                for (JsonElement jsonArray: jsonArrays) {
+                    
+                    JsonCommand identifierCommand = new JsonCommand(null, jsonArray.toString(), jsonArray, fromApiJsonHelper, "CLIENTIDENTIFIER", null, null, null, null, null, null, null, null, null, null, null);
+                  
+                    this.clientIdentifierRepo.addClientIdentifier(newClient.getId(),identifierCommand);
+                    
+                }
+                
             }
             
             

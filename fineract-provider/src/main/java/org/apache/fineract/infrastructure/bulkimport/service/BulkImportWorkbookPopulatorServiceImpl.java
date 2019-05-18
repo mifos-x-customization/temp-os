@@ -223,11 +223,12 @@ public class BulkImportWorkbookPopulatorServiceImpl implements BulkImportWorkboo
 	List<CodeValueData> addressTypesCodeValues=fetchCodeValuesByCodeName("ADDRESS_TYPE");
 	List<CodeValueData> stateProvinceCodeValues=fetchCodeValuesByCodeName("STATE");
 	List<CodeValueData> countryCodeValues=fetchCodeValuesByCodeName("COUNTRY");
+	List<CodeValueData> residenceCodeValues=fetchCodeValuesByCodeName("RESIDENCE");
 	if(entityType.trim().equalsIgnoreCase(GlobalEntityType.CLIENTS_PERSON.toString())) {
 		List<CodeValueData> genderCodeValues = fetchCodeValuesByCodeName("Gender");
 		return new ClientPersonWorkbookPopulator(new OfficeSheetPopulator(offices),
 				new PersonnelSheetPopulator(staff, offices), clientTypeCodeValues, genderCodeValues, clientClassification
-				, addressTypesCodeValues, stateProvinceCodeValues, countryCodeValues);
+				, addressTypesCodeValues, stateProvinceCodeValues, countryCodeValues,residenceCodeValues);
 	}else if(entityType.trim().equalsIgnoreCase(GlobalEntityType.CLIENTS_ENTTTY.toString())){
 		List<CodeValueData> constitutionCodeValues=fetchCodeValuesByCodeName("Constitution");
 		List<CodeValueData> mainBusinessline=fetchCodeValuesByCodeName("Main Business Line");

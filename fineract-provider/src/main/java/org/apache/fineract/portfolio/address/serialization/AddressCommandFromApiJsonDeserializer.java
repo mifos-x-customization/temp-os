@@ -100,6 +100,7 @@ public class AddressCommandFromApiJsonDeserializer {
 			enabledFieldList.add("addressTypeId");
 			enabledFieldList.add("locale");
 			enabledFieldList.add("dateFormat");
+			enabledFieldList.add("residenceTypeId");
 			supportedParameters = new HashSet<>(enabledFieldList);
 			// enabledFieldList.add("address");
 
@@ -110,6 +111,7 @@ public class AddressCommandFromApiJsonDeserializer {
 			enabledFieldList.add("locale");
 			enabledFieldList.add("dateFormat");
 			enabledFieldList.add("addressId");
+			enabledFieldList.add("residenceTypeId");
 			madatoryFieldsMap.put("addressId", true);
 			supportedParameters = new HashSet<>(enabledFieldList);
 		}
@@ -219,6 +221,11 @@ public class AddressCommandFromApiJsonDeserializer {
 							.matchesRegularExpression(regexFieldsMap.get("countryId"));
 				}
 			}
+		}
+		
+		if(this.fromApiJsonHelper.extractLongNamed("residenceTypeId", element) != null) {
+		    final Long residenceTypeId = this.fromApiJsonHelper.extractLongNamed("residenceTypeId", element);
+		    baseDataValidator.reset().parameter("residenceTypeId").value(residenceTypeId).notBlank();
 		}
 
 		final String postalCode = this.fromApiJsonHelper.extractStringNamed("postalCode", element);

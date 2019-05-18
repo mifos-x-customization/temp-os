@@ -34,6 +34,8 @@ public class AddressData {
 	private final Long addressId;
 
 	private final Long addressTypeId;
+	
+	private final Long residenceTypeId; 
 
 	private final Boolean isActive;
 
@@ -54,6 +56,8 @@ public class AddressData {
 	private final Long stateProvinceId;
 
 	private final String countryName;
+	
+	private final String residenceTypeName;
 
 	private final String stateName;
 
@@ -77,11 +81,13 @@ public class AddressData {
 	private final Collection<CodeValueData> countryIdOptions;
 	private final Collection<CodeValueData> stateProvinceIdOptions;
 	private final Collection<CodeValueData> addressTypeIdOptions;
+	private final Collection<CodeValueData> residenceTypeIdOptions;
 
-	public AddressData(Long addressTypeId,String street, String addressLine1, String addressLine2, String addressLine3,
+	public AddressData(Long addressTypeId,Long residenceTypeId, String street, String addressLine1, String addressLine2, String addressLine3,
 			String city,String postalCode, Boolean isActive,Long stateProvinceId,Long countryId) {
 
 		this.addressTypeId = addressTypeId;
+		this.residenceTypeId = residenceTypeId;
 		this.isActive = isActive;
 		this.street = street;
 		this.addressLine1 = addressLine1;
@@ -97,6 +103,7 @@ public class AddressData {
 		this.addressId = null;
 		this.countyDistrict = null;
 		this.countryName = null;
+		this.residenceTypeName = null;
 		this.stateName = null;
 		this.latitude = null;
 		this.longitude = null;
@@ -107,20 +114,22 @@ public class AddressData {
 		this.countryIdOptions = null;
 		this.stateProvinceIdOptions = null;
 		this.addressTypeIdOptions = null;
+		this.residenceTypeIdOptions = null;
 	}
 
 
-	private AddressData(final String addressType, final Long client_id, final Long addressId, final Long addressTypeId,
+	private AddressData(final String addressType, final Long client_id, final Long addressId, final Long residenceTypeId, final Long addressTypeId,
 			final Boolean is_active, final String street, final String addressLine1, final String addressLine2,
 			final String addressLine3, final String townVillage, final String city, final String countyDistrict,
-			final Long stateProvinceId, final Long countryId, final String stateName, final String countryName,
+			final Long stateProvinceId, final Long countryId, final String stateName, final String countryName,final String residenceTypeName,
 			final String postalCode, final BigDecimal latitude, final BigDecimal longitude, final String createdBy,
 			final Date createdOn, final String updatedBy, final Date updatedOn,
 			final Collection<CodeValueData> countryIdOptions, final Collection<CodeValueData> stateProvinceIdOptions,
-			final Collection<CodeValueData> addressTypeIdOptions) {
+			final Collection<CodeValueData> addressTypeIdOptions, final Collection<CodeValueData> residenceTypeIdOptions) {
 		this.addressType = addressType;
 		this.client_id = client_id;
 		this.addressId = addressId;
+		this.residenceTypeId = residenceTypeId;
 		this.addressTypeId = addressTypeId;
 		this.isActive = is_active;
 		this.street = street;
@@ -134,6 +143,7 @@ public class AddressData {
 		this.countryId = countryId;
 		this.stateName = stateName;
 		this.countryName = countryName;
+		this.residenceTypeName = residenceTypeName;
 		this.postalCode = postalCode;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -144,39 +154,43 @@ public class AddressData {
 		this.countryIdOptions = countryIdOptions;
 		this.stateProvinceIdOptions = stateProvinceIdOptions;
 		this.addressTypeIdOptions = addressTypeIdOptions;
+		this.residenceTypeIdOptions = residenceTypeIdOptions;
 	}
 
 	public static AddressData instance(final String addressType, final Long client_id, final Long addressId,
-			final Long addressTypeId, final Boolean is_active, final String street, final String addressLine1,
+			final Long addressTypeId, final Long residenceTypeId, final Boolean is_active, final String street, final String addressLine1,
 			final String addressLine2, final String addressLine3, final String townVillage, final String city,
 			final String countyDistrict, final Long stateProvinceId, final Long countryId, final String stateName,
-			final String countryName, final String postalCode, final BigDecimal latitude, final BigDecimal longitude,
+			final String countryName, final String residenceTypeName, final String postalCode, final BigDecimal latitude, final BigDecimal longitude,
 			final String createdBy, final Date createdOn, final String updatedBy, final Date updatedOn) {
 
-		return new AddressData(addressType, client_id, addressId, addressTypeId, is_active, street, addressLine1,
+		return new AddressData(addressType, client_id, addressId, addressTypeId,residenceTypeId, is_active, street, addressLine1,
 				addressLine2, addressLine3, townVillage, city, countyDistrict, stateProvinceId, countryId,
-				stateName, countryName, postalCode, latitude, longitude, createdBy, createdOn, updatedBy,
-				updatedOn, null, null, null);
+				stateName, countryName, residenceTypeName, postalCode, latitude, longitude, createdBy, createdOn, updatedBy,
+				updatedOn, null, null, null, null);
 	}
 
-	public static AddressData instance1(final Long addressId, final String street, final String addressLine1,
+	public static AddressData instance1(final Long addressId, final Long residenceTypeId,  final String street, final String addressLine1,
 			final String addressLine2, final String addressLine3, final String townVillage, final String city,
 			final String countyDistrict, final Long stateProvinceId, final Long countryId, final String postalCode,
 			final BigDecimal latitude, final BigDecimal longitude, final String createdBy, final Date createdOn,
 			final String updatedBy, final Date updatedOn) {
-		return new AddressData(null, null, addressId, null, false, street, addressLine1, addressLine2,
-				addressLine3, townVillage, city, countyDistrict, stateProvinceId, countryId, null, null,
-				postalCode, latitude, longitude, createdBy, createdOn, updatedBy, updatedOn, null, null, null);
+		return new AddressData(null, null, addressId, residenceTypeId,null,false, street, addressLine1, addressLine2,
+				addressLine3, townVillage, city, countyDistrict, stateProvinceId, countryId, null, null, null,
+				postalCode, latitude, longitude, createdBy, createdOn, updatedBy, updatedOn, null, null, null, null);
 	}
 
 	public static AddressData template(final Collection<CodeValueData> countryIdOptions,
 			final Collection<CodeValueData> stateProvinceIdOptions,
-			final Collection<CodeValueData> addressTypeIdOptions) {
+			final Collection<CodeValueData> addressTypeIdOptions, 
+			final Collection<CodeValueData> residenceTypeIdOptions) {
 		final Long client_idtemp = null;
 
 		final Long addressIdtemp = null;
 
 		final Long addressTypeIdtemp = null;
+		
+		final Long residenceTypeIdtemp = null;
 
 		final Boolean is_activetemp = null;
 
@@ -212,11 +226,11 @@ public class AddressData {
 
 		final Date updatedOntemp = null;
 
-		return new AddressData(null, client_idtemp, addressIdtemp, addressTypeIdtemp, is_activetemp, streettemp,
+		return new AddressData(null, client_idtemp, addressIdtemp, addressTypeIdtemp, residenceTypeIdtemp, is_activetemp, streettemp,
 				addressLine1temp, addressLine2temp, addressLine3temp, townVillagetemp, citytemp,
-				countyDistricttemp, stateProvinceIdtemp, countryIdtemp, null, null, postalCodetemp, latitudetemp,
+				countyDistricttemp, stateProvinceIdtemp, countryIdtemp, null, null,null, postalCodetemp, latitudetemp,
 				longitudetemp, createdBytemp, createdOntemp, updatedBytemp, updatedOntemp, countryIdOptions,
-				stateProvinceIdOptions, addressTypeIdOptions);
+				stateProvinceIdOptions, addressTypeIdOptions, residenceTypeIdOptions);
 	}
 
 }

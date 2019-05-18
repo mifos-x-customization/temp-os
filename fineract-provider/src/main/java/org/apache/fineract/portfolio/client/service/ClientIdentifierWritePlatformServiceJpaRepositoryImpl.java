@@ -46,6 +46,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.JsonElement;
+
 @Service
 public class ClientIdentifierWritePlatformServiceJpaRepositoryImpl implements ClientIdentifierWritePlatformService {
 
@@ -74,6 +76,8 @@ public class ClientIdentifierWritePlatformServiceJpaRepositoryImpl implements Cl
     public CommandProcessingResult addClientIdentifier(final Long clientId, final JsonCommand command) {
 
         this.context.authenticatedUser();
+        
+        
         final ClientIdentifierCommand clientIdentifierCommand = this.clientIdentifierCommandFromApiJsonDeserializer
                 .commandFromApiJson(command.json());
         clientIdentifierCommand.validateForCreate();
@@ -108,7 +112,8 @@ public class ClientIdentifierWritePlatformServiceJpaRepositoryImpl implements Cl
          	return CommandProcessingResult.empty();
         }
     }
-
+    
+    
     @Transactional
     @Override
     public CommandProcessingResult updateClientIdentifier(final Long clientId, final Long identifierId, final JsonCommand command) {

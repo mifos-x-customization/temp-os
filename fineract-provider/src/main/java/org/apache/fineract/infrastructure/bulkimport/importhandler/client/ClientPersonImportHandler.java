@@ -32,8 +32,13 @@ import org.apache.fineract.infrastructure.bulkimport.data.Count;
 import org.apache.fineract.infrastructure.bulkimport.importhandler.ImportHandler;
 import org.apache.fineract.infrastructure.bulkimport.importhandler.ImportHandlerUtils;
 import org.apache.fineract.infrastructure.bulkimport.importhandler.helper.DateSerializer;
+import org.apache.fineract.infrastructure.codes.data.CodeValueData;
+import org.apache.fineract.infrastructure.codes.service.CodeValueReadPlatformService;
 import org.apache.fineract.portfolio.address.data.AddressData;
+import org.apache.fineract.portfolio.client.command.ClientIdentifierCommand;
 import org.apache.fineract.portfolio.client.data.ClientData;
+import org.apache.fineract.portfolio.client.data.ClientIdentifierData;
+import org.apache.fineract.portfolio.client.service.ClientIdentifierReadPlatformService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,6 +48,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.util.IdempotentUtils;
 import com.google.gson.GsonBuilder;
 
 @Service
@@ -50,13 +56,17 @@ public class ClientPersonImportHandler implements ImportHandler {
 
     private Workbook workbook;
     private List<ClientData> clients;
+    private Collection<ClientIdentifierCommand> identifier;
+   
 
     private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
+    private final CodeValueReadPlatformService codeValue;
 
    @Autowired
     public ClientPersonImportHandler(final PortfolioCommandSourceWritePlatformService
-            commandsSourceWritePlatformService) {
+            commandsSourceWritePlatformService, final CodeValueReadPlatformService codeValue) {
         this.commandsSourceWritePlatformService = commandsSourceWritePlatformService;
+        this.codeValue = codeValue;
     }
 
     @Override
@@ -99,7 +109,11 @@ public class ClientPersonImportHandler implements ImportHandler {
         if (ImportHandlerUtils.readAsLong(ClientPersonConstants.MOBILE_NO_COL, row)!=null)
             mobileNo = ImportHandlerUtils.readAsLong(ClientPersonConstants.MOBILE_NO_COL, row).toString();
         LocalDate dob = ImportHandlerUtils.readAsDate(ClientPersonConstants.DOB_COL, row);
-
+        
+       String voterId = ImportHandlerUtils.readAsString(ClientPersonConstants.VOTER_ID_COL, row);
+       String rationCard = ImportHandlerUtils.readAsString(ClientPersonConstants.RATION_CARD_COL, row);
+       
+        
         String clientType=ImportHandlerUtils.readAsString(ClientPersonConstants.CLIENT_TYPE_COL, row);
         Long clientTypeId = null;
         if (clientType!=null) {
@@ -158,13 +172,29 @@ public class ClientPersonImportHandler implements ImportHandler {
                 if (countryAr[1] != null)
                     countryId = Long.parseLong(countryAr[1]);
             }
-             addressDataObj = new AddressData(addressTypeId, street, addressLine1, addressLine2, addressLine3,
+            
+            String residenceType = ImportHandlerUtils.readAsString(ClientPersonConstants.RESIDENCE_TYPE_COL, row);
+            Long residenceTypeId = null;
+            if (residenceType!=null) {
+                String residenceArr[] = residenceType.split("-");
+                        if(residenceArr[1]!=null) {
+                            residenceTypeId = Long.parseLong(residenceArr[1]);
+                        }
+            }
+            
+                   
+             addressDataObj = new AddressData(addressTypeId,residenceTypeId, street, addressLine1, addressLine2, addressLine3,
                     city, postalCode, isActiveAddress, stateProvinceId, countryId);
              addressList = new ArrayList<AddressData>(Arrays.asList(addressDataObj));
+             
+             ClientIdentifierCommand identifier = new ClientIdentifierCommand(this.codeValue.retrieveCodeValue(28L).getId(), voterId, "ACTIVE", "Added By Bulk");
+             this.identifier = new ArrayList<ClientIdentifierCommand>(Arrays.asList(identifier));
+             this.identifier.add(new ClientIdentifierCommand(this.codeValue.retrieveCodeValue(29L).getId(), rationCard, "ACTIVE", "Added by Bulk"));
         }
+    
         return ClientData.importClientPersonInstance(legalFormId,row.getRowNum(),firstName,lastName,middleName,submittedOn,activationDate,active,externalId,
 				officeId, staffId, mobileNo, dob, clientTypeId, genderId, clientClassicationId, isStaff,
-				addressList, locale, dateFormat);
+				addressList,identifier, locale, dateFormat);
 
 	}
 

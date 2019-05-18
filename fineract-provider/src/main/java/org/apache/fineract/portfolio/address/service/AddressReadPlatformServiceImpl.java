@@ -55,7 +55,7 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 		public String schema() {
 			return "addr.id as id,client.id as client_id,addr.street as street,addr.address_line_1 as address_line_1,addr.address_line_2 as address_line_2,"
 					+ "addr.address_line_3 as address_line_3,addr.town_village as town_village, addr.city as city,addr.county_district as county_district,"
-					+ "addr.state_province_id as state_province_id, addr.country_id as country_id,addr.postal_code as postal_code,addr.latitude as latitude,"
+					+ "addr.state_province_id as state_province_id, addr.country_id as country_id, addr.residence_id as residence_id, addr.postal_code as postal_code,addr.latitude as latitude,"
 					+ "addr.longitude as longitude,addr.created_by as created_by,addr.created_on as created_on,addr.updated_by as updated_by,"
 					+ "addr.updated_on as updated_on from m_address as addr,m_client client";
 		}
@@ -85,6 +85,8 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 			final long state_province_id = rs.getLong("state_province_id");
 
 			final long country_id = rs.getLong("country_id");
+			
+			final long residence_id = rs.getLong("residence_id");
 
 			final String postal_code = rs.getString("postal_code");
 
@@ -100,7 +102,7 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 
 			final Date updated_on = rs.getDate("updated_on");
 
-			return AddressData.instance1(addressId, street, address_line_1, address_line_2, address_line_3,
+			return AddressData.instance1(addressId, residence_id, street, address_line_1, address_line_2, address_line_3,
 					town_village, city, county_district, state_province_id, country_id, postal_code, latitude,
 					longitude, created_by, created_on, updated_by, updated_on);
 
@@ -111,11 +113,12 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 		public String schema() {
 			return "cv2.code_value as addressType,ca.client_id as client_id,addr.id as id,ca.address_type_id as addresstyp,ca.is_active as is_active,addr.street as street,addr.address_line_1 as address_line_1,addr.address_line_2 as address_line_2,"
 					+ "addr.address_line_3 as address_line_3,addr.town_village as town_village, addr.city as city,addr.county_district as county_district,"
-					+ "addr.state_province_id as state_province_id,cv.code_value as state_name, addr.country_id as country_id,c.code_value as country_name,addr.postal_code as postal_code,addr.latitude as latitude,"
+					+ "addr.state_province_id as state_province_id,cv.code_value as state_name, addr.country_id as country_id,c.code_value as country_name, addr.residence_id as residence_id,res.code_value as residence_name, addr.postal_code as postal_code,addr.latitude as latitude,"
 					+ "addr.longitude as longitude,addr.created_by as created_by,addr.created_on as created_on,addr.updated_by as updated_by,"
 					+ "addr.updated_on as updated_on"
 					+ " from m_address addr left join m_code_value cv on addr.state_province_id=cv.id"
 					+ " left join  m_code_value c on addr.country_id=c.id"
+					+ " left join m_code_value res on addr.residence_id=res.id"
 					+ " join m_client_address ca on addr.id= ca.address_id"
 					+ " join m_code_value cv2 on ca.address_type_id=cv2.id";
 
@@ -151,6 +154,10 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 			final long state_province_id = rs.getLong("state_province_id");
 
 			final long country_id = rs.getLong("country_id");
+			
+			final long residence_id = rs.getLong("residence_id");
+			
+			final String residence_name = rs.getString("residence_name");
 
 			final String country_name = rs.getString("country_name");
 
@@ -170,9 +177,9 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 
 			final Date updated_on = rs.getDate("updated_on");
 
-			return AddressData.instance(addressType, client_id, addressId, address_type_id, is_active, street,
+			return AddressData.instance(addressType, client_id, addressId, address_type_id,residence_id, is_active, street,
 					address_line_1, address_line_2, address_line_3, town_village, city, county_district,
-					state_province_id, country_id, state_name, country_name, postal_code, latitude, longitude,
+					state_province_id, country_id, state_name, country_name,residence_name, postal_code, latitude, longitude,
 					created_by, created_on, updated_by, updated_on);
 
 		}
@@ -237,10 +244,12 @@ public class AddressReadPlatformServiceImpl implements AddressReadPlatformServic
 				this.readService.retrieveCodeValuesByCode("COUNTRY"));
 
 		final List<CodeValueData> StateOptions = new ArrayList<>(this.readService.retrieveCodeValuesByCode("STATE"));
+		
+		final List<CodeValueData> residenceOptions = new ArrayList<>(this.readService.retrieveCodeValuesByCode("RESIDENCE"));
 
 		final List<CodeValueData> addressTypeOptions = new ArrayList<>(
 				this.readService.retrieveCodeValuesByCode("ADDRESS_TYPE"));
 
-		return AddressData.template(countryoptions, StateOptions, addressTypeOptions);
+		return AddressData.template(countryoptions, StateOptions, addressTypeOptions, residenceOptions);
 	}
 }

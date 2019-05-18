@@ -43,12 +43,13 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
   private List<CodeValueData>addressTypesCodeValues;
   private List<CodeValueData>stateProvinceCodeValues;
   private List<CodeValueData>countryCodeValues;
+  private List<CodeValueData>residenceCodeValues;
 
 
   public ClientPersonWorkbookPopulator(OfficeSheetPopulator officeSheetPopulator,
       PersonnelSheetPopulator personnelSheetPopulator,List<CodeValueData>clientTypeCodeValues,
           List<CodeValueData>genderCodeValues, List<CodeValueData>clientClassification,List<CodeValueData>addressTypesCodeValues,
-          List<CodeValueData>stateProvinceCodeValues,List<CodeValueData>countryCodeValues ) {
+          List<CodeValueData>stateProvinceCodeValues,List<CodeValueData>countryCodeValues, List<CodeValueData> residenceCodeValues ) {
     this.officeSheetPopulator = officeSheetPopulator;
     this.personnelSheetPopulator = personnelSheetPopulator;
     this.clientTypeCodeValues=clientTypeCodeValues;
@@ -57,6 +58,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     this.addressTypesCodeValues=addressTypesCodeValues;
     this.stateProvinceCodeValues=stateProvinceCodeValues;
     this.countryCodeValues=countryCodeValues;
+    this.residenceCodeValues=residenceCodeValues;
   }
 
 
@@ -118,6 +120,13 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
         row=clientSheet.createRow(rowIndex);
       writeString(ClientPersonConstants.LOOKUP_COUNTRY_COL,row,countryCodeValue.getName()+"-"+countryCodeValue.getId());
     }
+    rowIndex=0;
+    for (CodeValueData residenceTypeCodeValue: residenceCodeValues) {
+        Row row = clientSheet.getRow(++rowIndex);
+        if(row == null)
+            row = clientSheet.createRow(rowIndex);
+        writeString(ClientPersonConstants.LOOKUP_RESIDENCE_TYPE_COL,row,residenceTypeCodeValue.getName()+"-"+residenceTypeCodeValue.getId());
+    }
 
   }
 
@@ -137,6 +146,8 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     worksheet.setColumnWidth(ClientPersonConstants.ACTIVATION_DATE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.ACTIVE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.MOBILE_NO_COL, TemplatePopulateImportConstants.MEDIUM_COL_SIZE);
+    worksheet.setColumnWidth(ClientPersonConstants.VOTER_ID_COL, TemplatePopulateImportConstants.MEDIUM_COL_SIZE);
+    worksheet.setColumnWidth(ClientPersonConstants.RATION_CARD_COL, TemplatePopulateImportConstants.MEDIUM_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.DOB_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.CLIENT_TYPE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.GENDER_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
@@ -151,6 +162,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     worksheet.setColumnWidth(ClientPersonConstants.CITY_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.STATE_PROVINCE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.COUNTRY_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
+    worksheet.setColumnWidth(ClientPersonConstants.RESIDENCE_TYPE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.POSTAL_CODE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.IS_ACTIVE_ADDRESS_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.WARNING_COL,TemplatePopulateImportConstants.MEDIUM_COL_SIZE);
@@ -163,6 +175,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     worksheet.setColumnWidth(ClientPersonConstants.LOOKUP_ADDRESS_TYPE_COL,TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.LOOKUP_STATE_PROVINCE_COL,TemplatePopulateImportConstants.SMALL_COL_SIZE);
     worksheet.setColumnWidth(ClientPersonConstants.LOOKUP_COUNTRY_COL,TemplatePopulateImportConstants.SMALL_COL_SIZE);
+    worksheet.setColumnWidth(ClientPersonConstants.LOOKUP_RESIDENCE_TYPE_COL, TemplatePopulateImportConstants.SMALL_COL_SIZE);
     writeString(ClientPersonConstants.OFFICE_NAME_COL, rowHeader, "Office Name*");
     writeString(ClientPersonConstants.STAFF_NAME_COL, rowHeader, "Staff Name");
     writeString(ClientPersonConstants.EXTERNAL_ID_COL, rowHeader, "Aadhar  Card* ");
@@ -170,6 +183,8 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     writeString(ClientPersonConstants.ACTIVATION_DATE_COL, rowHeader, "Activation date");
     writeString(ClientPersonConstants.ACTIVE_COL, rowHeader, "Active*");
     writeString(ClientPersonConstants.MOBILE_NO_COL, rowHeader, "Mobile number");
+    writeString(ClientPersonConstants.VOTER_ID_COL,rowHeader, "Voter ID");
+    writeString(ClientPersonConstants.RATION_CARD_COL, rowHeader, "Ration Card");
     writeString(ClientPersonConstants.DOB_COL, rowHeader, "Date of Birth ");
     writeString(ClientPersonConstants.CLIENT_TYPE_COL, rowHeader, "Client Type ");
     writeString(ClientPersonConstants.IS_STAFF_COL, rowHeader, "Is a staff memeber ");
@@ -184,6 +199,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     writeString(ClientPersonConstants.CITY_COL, rowHeader, "City ");
     writeString(ClientPersonConstants.STATE_PROVINCE_COL, rowHeader, "State/ Province ");
     writeString(ClientPersonConstants.COUNTRY_COL, rowHeader, "Country ");
+    writeString(ClientPersonConstants.RESIDENCE_TYPE_COL, rowHeader, "Residence Type ");
     writeString(ClientPersonConstants.POSTAL_CODE_COL, rowHeader, "Postal Code ");
     writeString(ClientPersonConstants.IS_ACTIVE_ADDRESS_COL, rowHeader, "Is active Address ? ");
     writeString(ClientPersonConstants.WARNING_COL, rowHeader, "All * marked fields are compulsory.");
@@ -196,6 +212,7 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     writeString(ClientPersonConstants.LOOKUP_ADDRESS_TYPE_COL, rowHeader, "Lookup AddressType ");
     writeString(ClientPersonConstants.LOOKUP_STATE_PROVINCE_COL, rowHeader, "Lookup State/Province ");
     writeString(ClientPersonConstants.LOOKUP_COUNTRY_COL, rowHeader, "Lookup Country ");
+    writeString(ClientPersonConstants.LOOKUP_RESIDENCE_TYPE_COL, rowHeader, "Lookup ResidenceType");
 
 
   }
@@ -229,10 +246,11 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
             SpreadsheetVersion.EXCEL97.getLastRowIndex(),ClientPersonConstants. STATE_PROVINCE_COL, ClientPersonConstants.STATE_PROVINCE_COL);
     CellRangeAddressList countryRange=new CellRangeAddressList(1,
             SpreadsheetVersion.EXCEL97.getLastRowIndex(), ClientPersonConstants.COUNTRY_COL, ClientPersonConstants.COUNTRY_COL);
+    CellRangeAddressList residenceTypeRange= new CellRangeAddressList(1,
+            SpreadsheetVersion.EXCEL97.getLastRowIndex(),ClientPersonConstants.RESIDENCE_TYPE_COL, ClientPersonConstants.RESIDENCE_TYPE_COL);
     CellRangeAddressList activeAddressRange=new CellRangeAddressList(1,
             SpreadsheetVersion.EXCEL97.getLastRowIndex(),ClientPersonConstants. IS_ACTIVE_ADDRESS_COL,ClientPersonConstants. IS_ACTIVE_ADDRESS_COL);
-
-
+   
     DataValidationHelper validationHelper = new HSSFDataValidationHelper((HSSFSheet) worksheet);
 
     List<OfficeData> offices = officeSheetPopulator.getOffices();
@@ -269,8 +287,11 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
             validationHelper.createFormulaListConstraint("StateProvince");
     DataValidationConstraint countryConstraint =
             validationHelper.createFormulaListConstraint("Country");
+    DataValidationConstraint residenceTypeConstraint =
+            validationHelper.createFormulaListConstraint("ResidenceType");
     DataValidationConstraint activeAddressConstraint =
             validationHelper.createExplicitListConstraint(new String[] {"True", "False"});
+   
 
     DataValidation officeValidation =
         validationHelper.createValidation(officeNameConstraint, officeNameRange);
@@ -300,9 +321,11 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
             validationHelper.createValidation(stateProvinceConstraint, stateProvinceRange);
     DataValidation countryValidation =
             validationHelper.createValidation(countryConstraint, countryRange);
+    DataValidation residenceTypeValidation =
+            validationHelper.createValidation(residenceTypeConstraint, residenceTypeRange);
     DataValidation activeAddressValidation =
             validationHelper.createValidation(activeAddressConstraint,activeAddressRange);
-
+   
     worksheet.addValidationData(activeValidation);
     worksheet.addValidationData(officeValidation);
     worksheet.addValidationData(staffValidation);
@@ -317,7 +340,9 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     worksheet.addValidationData(addressTypeValidation);
     worksheet.addValidationData(stateProvinceValidation);
     worksheet.addValidationData(countryValidation);
+    worksheet.addValidationData(residenceTypeValidation);
     worksheet.addValidationData(activeAddressValidation);
+    
   }
 
   private void setNames(Sheet worksheet, List<OfficeData> offices) {
@@ -354,6 +379,12 @@ public class ClientPersonWorkbookPopulator extends AbstractWorkbookPopulator {
     countryGroup.setNameName("Country");
     countryGroup.setRefersToFormula(TemplatePopulateImportConstants.CLIENT_PERSON_SHEET_NAME+"!$AQ$2:$AQ$" +
             (countryCodeValues.size() + 1));
+    
+    Name residenceTypeGroup = clientWorkbook.createName();
+    residenceTypeGroup.setNameName("ResidenceType");
+    residenceTypeGroup.setRefersToFormula(TemplatePopulateImportConstants.CLIENT_PERSON_SHEET_NAME+"!$AR$2:$AR$"  + 
+            (residenceCodeValues.size() + 1));
+         
     
     for (Integer i = 0; i < offices.size(); i++) {
       Integer[] officeNameToBeginEndIndexesOfStaff =

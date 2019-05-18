@@ -41,7 +41,7 @@ public class ClientIdentifierData {
             final String documentKey, final String status, final String description) {
         return new ClientIdentifierData(id, clientId, documentType, documentKey, description, status, null);
     }
-
+    
     public static ClientIdentifierData template(final Collection<CodeValueData> codeValues) {
         return new ClientIdentifierData(null, null, null, null, null, null, codeValues);
     }

@@ -172,13 +172,22 @@ public class ClientEntityImportHandler implements ImportHandler {
                 if (countryAr[1] != null)
                     countryId = Long.parseLong(countryAr[1]);
             }
-            addressDataObj = new AddressData(addressTypeId, street, addressLine1, addressLine2, addressLine3,
+            
+            String residenceType= ImportHandlerUtils.readAsString(ClientEntityConstants.RESIDENCE_TYPE_COL, row);
+            Long residenceId = null;
+            if (residenceType!=null) {
+                String residenceAr[] = residenceType.split("-");
+                if (residenceAr[1] != null)
+                    residenceId = Long.parseLong(residenceAr[1]);
+            }
+            
+            addressDataObj = new AddressData(addressTypeId, residenceId, street, addressLine1, addressLine2, addressLine3,
                     city, postalCode, isActiveAddress, stateProvinceId, countryId);
             addressList = new ArrayList<AddressData>(Arrays.asList(addressDataObj));
         }
         return ClientData.importClientEntityInstance(legalFormId,row.getRowNum(),name,officeId,clientTypeId,clientClassicationId,
 				staffId, active, activationDate, submittedOn, externalId, incorportionDate, mobileNo,
-				clientNonPersonData, addressList, locale, dateFormat);
+				clientNonPersonData, addressList,null, locale, dateFormat);
 	}
 
     public Count importEntity(String dateFormat) {

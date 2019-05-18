@@ -160,6 +160,8 @@ public final class ClientDataValidator {
             baseDataValidator.reset().parameter(ClientApiConstants.mobileNoParamName).value(mobileNo).notNull()
                     .notExceedingLengthOf(10);
         }
+        
+        
 
         final Boolean active = this.fromApiJsonHelper.extractBooleanNamed(ClientApiConstants.activeParamName, element);
         if (active != null) {
