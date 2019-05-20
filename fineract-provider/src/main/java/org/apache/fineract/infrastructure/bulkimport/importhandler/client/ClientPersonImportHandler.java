@@ -111,9 +111,13 @@ public class ClientPersonImportHandler implements ImportHandler {
             mobileNo = ImportHandlerUtils.readAsLong(ClientPersonConstants.MOBILE_NO_COL, row).toString();
         LocalDate dob = ImportHandlerUtils.readAsDate(ClientPersonConstants.DOB_COL, row);
         
+       boolean voterIdAndRation = true;
        String voterId = ImportHandlerUtils.readAsString(ClientPersonConstants.VOTER_ID_COL, row);
        String rationCard = ImportHandlerUtils.readAsString(ClientPersonConstants.RATION_CARD_COL, row);
        
+       if (voterId == null || rationCard == null) {
+          voterIdAndRation = false;
+       }
         
         String clientType=ImportHandlerUtils.readAsString(ClientPersonConstants.CLIENT_TYPE_COL, row);
         Long clientTypeId = null;
@@ -188,27 +192,30 @@ public class ClientPersonImportHandler implements ImportHandler {
                     city, postalCode, isActiveAddress, stateProvinceId, countryId);
              addressList = new ArrayList<AddressData>(Arrays.asList(addressDataObj));
              
-             // Find code value based on name?
-             if (ImportHandlerUtils.readAsString(ClientPersonConstants.VOTER_ID_COL, row) !=null) {
-                 Collection<CodeValueData> codes = this.codeValue.retrieveCodeValuesByCode("Customer identifier");
-                 Long voterid = null;
-                 Long rationid = null;
-                 
-                 if (codes != null) {
-                     for (CodeValueData code : codes) {
-                         if (code.getName().equals("Voter Id")) {
-                             voterid = code.getId();
-                             ClientIdentifierCommand identifier = new ClientIdentifierCommand(voterid, voterId, "ACTIVE", "Added By Bulk");
-                             this.identifier = new ArrayList<>(Arrays.asList(identifier));
-                             
-                         }
-                         if (code.getName().equals("Ration Card")) {
-                             rationid = code.getId();
-                             this.identifier.add(new ClientIdentifierCommand(rationid, rationCard, "ACTIVE", "Added by Bulk"));
+             if (voterIdAndRation) {
+              // Find code value based on name?
+                 if (ImportHandlerUtils.readAsString(ClientPersonConstants.VOTER_ID_COL, row) !=null) {
+                     Collection<CodeValueData> codes = this.codeValue.retrieveCodeValuesByCode("Customer identifier");
+                     Long voterid = null;
+                     Long rationid = null;
+                     
+                     if (codes != null) {
+                         for (CodeValueData code : codes) {
+                             if (code.getName().equals("Voter Id")) {
+                                 voterid = code.getId();
+                                 ClientIdentifierCommand identifier = new ClientIdentifierCommand(voterid, voterId, "ACTIVE", "Added By Bulk");
+                                 this.identifier = new ArrayList<>(Arrays.asList(identifier));
+                                 
+                             }
+                             if (code.getName().equals("Ration Card")) {
+                                 rationid = code.getId();
+                                 this.identifier.add(new ClientIdentifierCommand(rationid, rationCard, "ACTIVE", "Added by Bulk"));
+                             }
                          }
                      }
                  }
              }
+             
              
            
              

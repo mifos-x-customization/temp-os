@@ -356,6 +356,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 }
             }
             
+            
+            
             // Now we map to those we have VOTERID and RATION Card
             if (command.arrayOfParameterNamed("identifier") != null) {
                 JsonElement element = this.fromApiJsonHelper.parse(command.json());
