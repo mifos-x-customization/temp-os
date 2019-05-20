@@ -369,9 +369,15 @@ private WorkbookPopulator populateCenterWorkbook(Long officeId,Long staffId){
 		List<FundData> funds = fetchFunds();
 		List<PaymentTypeData> paymentTypes = fetchPaymentTypes();
 		List<CurrencyData> currencies = fetchCurrencies();
+		List<CodeValueData> loanPurpose = fetchPurpose();
 		return new LoanWorkbookPopulator(new OfficeSheetPopulator(offices), new ClientSheetPopulator(clients, offices),
 				new GroupSheetPopulator(groups, offices), new PersonnelSheetPopulator(staff, offices),
-				new LoanProductSheetPopulator(loanproducts), new ExtrasSheetPopulator(funds, paymentTypes, currencies));
+				new LoanProductSheetPopulator(loanproducts), new ExtrasSheetPopulator(funds, paymentTypes, currencies),loanPurpose);
+	}
+	
+	private List<CodeValueData> fetchPurpose(){
+	    List<CodeValueData> purposes = this.fetchCodeValuesByCodeName("LoanPurpose");
+	    return purposes;
 	}
 
 	private List<CurrencyData> fetchCurrencies() {

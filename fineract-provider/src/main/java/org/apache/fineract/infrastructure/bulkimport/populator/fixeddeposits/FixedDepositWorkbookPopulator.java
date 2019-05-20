@@ -58,7 +58,7 @@ public class FixedDepositWorkbookPopulator extends AbstractWorkbookPopulator {
         setRules(fixedDepositSheet,dateFormat);
         setDefaults(fixedDepositSheet,dateFormat);
         setClientAndGroupDateLookupTable(fixedDepositSheet, clientSheetPopulator.getClients(), null,
-                FixedDepositConstants.LOOKUP_CLIENT_NAME_COL,FixedDepositConstants.LOOKUP_ACTIVATION_DATE_COL,!TemplatePopulateImportConstants.CONTAINS_CLIENT_EXTERNAL_ID,dateFormat);
+                FixedDepositConstants.LOOKUP_CLIENT_NAME_COL,FixedDepositConstants.LOOKUP_ACTIVATION_DATE_COL,!TemplatePopulateImportConstants.CONTAINS_CLIENT_EXTERNAL_ID,dateFormat,null);
         setLayout(fixedDepositSheet);
     }
 

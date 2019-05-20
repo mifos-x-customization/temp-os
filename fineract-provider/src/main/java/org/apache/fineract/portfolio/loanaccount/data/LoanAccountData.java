@@ -248,6 +248,25 @@ public class LoanAccountData {
                 rowIndex, externalId, null, charges, linkAccountId,locale,dateFormat);
     }
 
+    public static LoanAccountData importInstanceIndividualWithLoanPurpose(EnumOptionData loanTypeEnumOption,Long clientId,Long productId,
+            Long loanOfficerId,LocalDate submittedOnDate,
+            Long fundId,BigDecimal principal, Integer numberOfRepayments,Integer repaymentEvery,
+            EnumOptionData repaidEveryFrequencyEnums, Integer loanTermFrequency,EnumOptionData loanTermFrequencyTypeEnum,
+            BigDecimal nominalInterestRate,LocalDate expectedDisbursementDate ,EnumOptionData amortizationEnumOption,
+            EnumOptionData interestMethodEnum, EnumOptionData interestCalculationPeriodTypeEnum,BigDecimal inArrearsTolerance,Long transactionProcessingStrategyId,
+            Integer graceOnPrincipalPayment,Integer graceOnInterestPayment,Integer graceOnInterestCharged,
+            LocalDate interestChargedFromDate,LocalDate repaymentsStartingFromDate,Integer rowIndex ,
+            String externalId,Long groupId,Collection<LoanChargeData> charges,String linkAccountId,
+            String locale,String dateFormat, Long loanPurposeId){
+
+        return new LoanAccountData(loanTypeEnumOption, clientId, productId, loanOfficerId, submittedOnDate, fundId,
+                principal, numberOfRepayments,
+                repaymentEvery, repaidEveryFrequencyEnums, loanTermFrequency, loanTermFrequencyTypeEnum, nominalInterestRate, expectedDisbursementDate,
+                amortizationEnumOption, interestMethodEnum, interestCalculationPeriodTypeEnum, inArrearsTolerance, transactionProcessingStrategyId,
+                graceOnPrincipalPayment, graceOnInterestPayment, graceOnInterestCharged, interestChargedFromDate, repaymentsStartingFromDate,
+                rowIndex, externalId, null, charges, linkAccountId,locale,dateFormat, loanPurposeId);
+    }
+
 
     public static LoanAccountData importInstanceGroup(EnumOptionData loanTypeEnumOption,Long groupIdforGroupLoan,Long productId,
             Long loanOfficerId,LocalDate submittedOnDate,
@@ -1490,6 +1509,161 @@ public class LoanAccountData {
                 acc.createStandingInstructionAtDisbursement, acc.paidInAdvance, acc.interestRatesPeriods,
                 acc.isVariableInstallmentsAllowed, acc.minimumGap, acc.maximumGap, acc.subStatus, acc.canUseForTopup,
                 acc.clientActiveLoanOptions, acc.isTopup, acc.closureLoanId, acc.closureLoanAccountNo, acc.topupAmount, acc.isEqualAmortization);
+    }
+    
+    private LoanAccountData(final EnumOptionData loanType,final Long clientId,final Long productId,final Long loanOfficerId,final LocalDate submittedOnDate,
+            final Long fundId,final BigDecimal principal, final Integer numberOfRepayments,final Integer repaymentEvery,
+            final EnumOptionData repaymentFrequencyType, final Integer loanTermFrequency,final EnumOptionData loanTermFrequencyType,
+            final BigDecimal interestRatePerPeriod,final LocalDate expectedDisbursementDate , final EnumOptionData amortizationType,
+            final EnumOptionData interestType, final EnumOptionData interestCalculationPeriodType,final BigDecimal inArrearsTolerance, final Long transactionProcessingStrategyId,
+            final Integer graceOnPrincipalPayment,final Integer graceOnInterestPayment,final Integer graceOnInterestCharged,
+            final LocalDate interestChargedFromDate, final LocalDate repaymentsStartingFromDate,final Integer rowIndex ,
+            final String externalId,final Long groupId,final Collection<LoanChargeData> charges,final String linkAccountId,
+            final String locale,final String dateFormat, final Long loanPurposeId) {
+        
+        this.loanType = loanType;
+        this.clientId = clientId;
+        this.productId = productId;
+        this.loanOfficerId = loanOfficerId;
+        this.submittedOnDate = submittedOnDate;
+        this.fundId = fundId;
+        this.principal = principal;
+        this.numberOfRepayments = numberOfRepayments;
+        this.repaymentEvery = repaymentEvery;
+        this.repaymentFrequencyType = repaymentFrequencyType;
+        this.loanTermFrequency = loanTermFrequency;
+        this.interestRatePerPeriod = interestRatePerPeriod;
+        this.expectedDisbursementDate = expectedDisbursementDate;
+        this.amortizationType = amortizationType;
+        this.interestType = interestType;
+        this.interestCalculationPeriodType = interestCalculationPeriodType;
+        this.inArrearsTolerance = inArrearsTolerance;
+        this.transactionProcessingStrategyId = transactionProcessingStrategyId;
+        this.graceOnPrincipalPayment = graceOnPrincipalPayment;
+        this.graceOnInterestPayment = graceOnInterestPayment;
+        this.graceOnInterestCharged = graceOnInterestCharged;
+        this.interestChargedFromDate = interestChargedFromDate;
+        this.repaymentsStartingFromDate = repaymentsStartingFromDate;
+        this.rowIndex = rowIndex;
+        this.externalId = externalId;
+        this.groupId = groupId;
+        this.charges = charges;
+        this.linkAccountId = linkAccountId;
+        this.locale = locale;
+        this.dateFormat = dateFormat;
+        this.loanPurposeOptions = null;
+        
+        this.id = null;
+        this.accountNo = null;
+
+        this.status = null;
+        this.subStatus = null;
+
+        this.clientAccountNo = null;
+        this.clientName = null;
+        this.clientOfficeId = null;
+        this.group = null;
+        this.loanProductId = null;
+        this.loanProductName = null;
+        this.loanProductDescription = null;
+        this.isLoanProductLinkedToFloatingRate = false;
+
+        this.fundName = null;
+        this.loanPurposeId = loanPurposeId;
+        this.loanPurposeName = null;
+
+        this.loanOfficerName = null;
+
+        this.currency = null;
+
+        this.approvedPrincipal = null;
+        this.proposedPrincipal = null;
+        this.termFrequency = null;
+        this.termPeriodFrequencyType = null;
+
+
+        this.repaymentFrequencyNthDayType = null;
+        this.repaymentFrequencyDayOfWeekType = null;
+
+        this.interestRateFrequencyType = null;
+        this.annualInterestRate = null;
+        this.isFloatingInterestRate = false;
+        this.interestRateDifferential = null;
+
+        this.allowPartialPeriodInterestCalcualtion = null;
+
+        this.transactionProcessingStrategyName = null;
+
+        this.recurringMoratoriumOnPrincipalPeriods = null;
+
+        this.graceOnArrearsAgeing = null;
+
+        this.expectedFirstRepaymentOnDate = null;
+        this.syncDisbursementWithMeeting = null;
+        this.timeline = null;
+        this.summary = null;
+        this.repaymentSchedule = null;
+        this.transactions = null;
+
+        this.collateral = null;
+        this.guarantors = null;
+        this.meeting = null;
+        this.notes = null;
+        this.disbursementDetails = null;
+        this.originalSchedule = null;
+        this.productOptions = null;
+        this.loanOfficerOptions = null;
+        this.fundOptions = null;
+        this.termFrequencyTypeOptions = null;
+        this.repaymentFrequencyTypeOptions = null;
+        this.repaymentFrequencyNthDayTypeOptions = null;
+        this.repaymentFrequencyDaysOfWeekTypeOptions = null;
+        this.interestRateFrequencyTypeOptions = null;
+        this.amortizationTypeOptions = null;
+        this.interestTypeOptions = null;
+        this.interestCalculationPeriodTypeOptions = null;
+        this.transactionProcessingStrategyOptions = null;
+        this.chargeOptions = null;
+        this.loanCollateralOptions = null;
+        this.calendarOptions = null;
+        this.feeChargesAtDisbursementCharged = null;
+        this.totalOverpaid = null;
+        this.loanCounter = null;
+        this.loanProductCounter = null;
+        this.linkedAccount = null;
+        this.accountLinkingOptions = null;
+        this.multiDisburseLoan = null;
+        this.canDefineInstallmentAmount = null;
+        this.fixedEmiAmount = null;
+        this.maxOutstandingLoanBalance = null;
+        this.canDisburse = null;
+        this.emiAmountVariations = null;
+        this.clientActiveLoanOptions = null;
+        this.canUseForTopup = null;
+        this.isTopup = false;
+        this.closureLoanId = null;
+        this.closureLoanAccountNo = null;
+        this.topupAmount = null;
+        this.memberVariations = null;
+        this.inArrears = null;
+        this.isNPA = null;
+        this.overdueCharges = null;
+        this.daysInMonthType = null;
+        this.daysInYearType = null;
+        this.isInterestRecalculationEnabled = false;
+        this.interestRecalculationData = null;
+        this.createStandingInstructionAtDisbursement = null;
+        this.paidInAdvance = null;
+        this.interestRatesPeriods = null;
+        this.isVariableInstallmentsAllowed = null;
+        this.minimumGap = null;
+        this.maximumGap = null;
+        this.isEqualAmortization = null;
+
+               
+                
+               
+        
     }
 
     private LoanAccountData(final Long id, //

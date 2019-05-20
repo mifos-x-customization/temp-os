@@ -58,7 +58,7 @@ public class RecurringDepositWorkbookPopulator extends AbstractWorkbookPopulator
         setRules(recurringDepositSheet,dateFormat);
         setDefaults(recurringDepositSheet,dateFormat);
         setClientAndGroupDateLookupTable(recurringDepositSheet, clientSheetPopulator.getClients(), null,
-                RecurringDepositConstants.LOOKUP_CLIENT_NAME_COL,  RecurringDepositConstants.LOOKUP_ACTIVATION_DATE_COL,!TemplatePopulateImportConstants.CONTAINS_CLIENT_EXTERNAL_ID,dateFormat);
+                RecurringDepositConstants.LOOKUP_CLIENT_NAME_COL,  RecurringDepositConstants.LOOKUP_ACTIVATION_DATE_COL,!TemplatePopulateImportConstants.CONTAINS_CLIENT_EXTERNAL_ID,dateFormat, null);
         setLayout(recurringDepositSheet);
 
     }

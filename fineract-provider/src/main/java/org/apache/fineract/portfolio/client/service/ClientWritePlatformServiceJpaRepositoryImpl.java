@@ -18,6 +18,7 @@
  */
 package org.apache.fineract.portfolio.client.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,8 +34,10 @@ import org.apache.fineract.commands.service.CommandWrapperBuilder;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.AccountNumberFormat;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.AccountNumberFormatRepositoryWrapper;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.EntityAccountType;
+import org.apache.fineract.infrastructure.codes.data.CodeValueData;
 import org.apache.fineract.infrastructure.codes.domain.CodeValue;
 import org.apache.fineract.infrastructure.codes.domain.CodeValueRepositoryWrapper;
+import org.apache.fineract.infrastructure.codes.service.CodeValueReadPlatformService;
 import org.apache.fineract.infrastructure.configuration.data.GlobalConfigurationPropertyData;
 import org.apache.fineract.infrastructure.configuration.domain.ConfigurationDomainService;
 import org.apache.fineract.infrastructure.configuration.service.ConfigurationReadPlatformService;
@@ -101,6 +104,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+
 @Service
 public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWritePlatformService {
 
@@ -130,6 +134,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
     private final BusinessEventNotifierService businessEventNotifierService;
     private final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService;
     private final ClientIdentifierWritePlatformService clientIdentifierRepo;
+    private final CodeValueReadPlatformService codeValue;
     @Autowired
     public ClientWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
             final ClientRepositoryWrapper clientRepository, final ClientNonPersonRepositoryWrapper clientNonPersonRepository,
@@ -143,7 +148,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository, final FromJsonHelper fromApiJsonHelper,
             final ConfigurationReadPlatformService configurationReadPlatformService,
             final AddressWritePlatformService addressWritePlatformService, final ClientFamilyMembersWritePlatformService clientFamilyMembersWritePlatformService, final BusinessEventNotifierService businessEventNotifierService,
-            final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService, final ClientIdentifierWritePlatformService clientIdentifierRepo ) {
+            final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService, final ClientIdentifierWritePlatformService clientIdentifierRepo , 
+            final CodeValueReadPlatformService codeValue) {
         this.context = context;
         this.clientRepository = clientRepository;
         this.clientNonPersonRepository = clientNonPersonRepository;
@@ -168,6 +174,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
         this.businessEventNotifierService = businessEventNotifierService;
         this.entityDatatableChecksWritePlatformService = entityDatatableChecksWritePlatformService;
         this.clientIdentifierRepo = clientIdentifierRepo;
+        this.codeValue = codeValue;
     }
 
     @Transactional
@@ -336,14 +343,35 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             if (isAddressEnabled) {
                 this.addressWritePlatformService.addNewClientAddress(newClient, command);
             }
+            // Get the ID belonging to VOTERID and RATION CARD
+            Collection<CodeValueData> codes =this.codeValue.retrieveCodeValuesByCode("Customer identifier");
+             Long codeVaueIdVoter = null;
+             Long codeValueRationId = null;
+            for (CodeValueData code: codes) {
+                if(code.getName().equals("Voter Id")) {
+                    codeVaueIdVoter = code.getId();
+                }
+                if(code.getName().equals("Ration Card")) {
+                    codeValueRationId = code.getId();
+                }
+            }
             
+            // Now we map to those we have VOTERID and RATION Card
             if (command.arrayOfParameterNamed("identifier") != null) {
                 JsonElement element = this.fromApiJsonHelper.parse(command.json());
                 final JsonArray jsonArrays = this.fromApiJsonHelper.extractJsonArrayNamed("identifier", element);
                 for (JsonElement jsonArray: jsonArrays) {
-                    
+                    String documentType = this.fromApiJsonHelper.extractStringNamed("documentTypeId", jsonArray);
+                    if (documentType.equals("VOTERID")) {
+                       jsonArray.getAsJsonObject().remove("documentTypeId");
+                       jsonArray.getAsJsonObject().addProperty("documentTypeId", codeVaueIdVoter);
+                       
+                    }
+                    if(documentType.equals("RATIONCARD")) {
+                        jsonArray.getAsJsonObject().remove("documentTypeId");
+                        jsonArray.getAsJsonObject().addProperty("documentTypeId", codeValueRationId);
+                    }
                     JsonCommand identifierCommand = new JsonCommand(null, jsonArray.toString(), jsonArray, fromApiJsonHelper, "CLIENTIDENTIFIER", null, null, null, null, null, null, null, null, null, null, null);
-                  
                     this.clientIdentifierRepo.addClientIdentifier(newClient.getId(),identifierCommand);
                     
                 }

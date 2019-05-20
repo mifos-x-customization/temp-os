@@ -33,6 +33,7 @@ import org.apache.fineract.infrastructure.bulkimport.importhandler.ImportHandler
 import org.apache.fineract.infrastructure.bulkimport.importhandler.ImportHandlerUtils;
 import org.apache.fineract.infrastructure.bulkimport.importhandler.helper.DateSerializer;
 import org.apache.fineract.infrastructure.codes.data.CodeValueData;
+import org.apache.fineract.infrastructure.codes.domain.CodeValue;
 import org.apache.fineract.infrastructure.codes.service.CodeValueReadPlatformService;
 import org.apache.fineract.portfolio.address.data.AddressData;
 import org.apache.fineract.portfolio.client.command.ClientIdentifierCommand;
@@ -182,14 +183,35 @@ public class ClientPersonImportHandler implements ImportHandler {
                         }
             }
             
-                   
+                    
              addressDataObj = new AddressData(addressTypeId,residenceTypeId, street, addressLine1, addressLine2, addressLine3,
                     city, postalCode, isActiveAddress, stateProvinceId, countryId);
              addressList = new ArrayList<AddressData>(Arrays.asList(addressDataObj));
              
-             ClientIdentifierCommand identifier = new ClientIdentifierCommand(this.codeValue.retrieveCodeValue(28L).getId(), voterId, "ACTIVE", "Added By Bulk");
-             this.identifier = new ArrayList<ClientIdentifierCommand>(Arrays.asList(identifier));
-             this.identifier.add(new ClientIdentifierCommand(this.codeValue.retrieveCodeValue(29L).getId(), rationCard, "ACTIVE", "Added by Bulk"));
+             // Find code value based on name?
+             if (ImportHandlerUtils.readAsString(ClientPersonConstants.VOTER_ID_COL, row) !=null) {
+                 Collection<CodeValueData> codes = this.codeValue.retrieveCodeValuesByCode("Customer identifier");
+                 Long voterid = null;
+                 Long rationid = null;
+                 
+                 if (codes != null) {
+                     for (CodeValueData code : codes) {
+                         if (code.getName().equals("Voter Id")) {
+                             voterid = code.getId();
+                             ClientIdentifierCommand identifier = new ClientIdentifierCommand(voterid, voterId, "ACTIVE", "Added By Bulk");
+                             this.identifier = new ArrayList<>(Arrays.asList(identifier));
+                             
+                         }
+                         if (code.getName().equals("Ration Card")) {
+                             rationid = code.getId();
+                             this.identifier.add(new ClientIdentifierCommand(rationid, rationCard, "ACTIVE", "Added by Bulk"));
+                         }
+                     }
+                 }
+             }
+             
+           
+             
         }
     
         return ClientData.importClientPersonInstance(legalFormId,row.getRowNum(),firstName,lastName,middleName,submittedOn,activationDate,active,externalId,

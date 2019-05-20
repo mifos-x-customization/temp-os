@@ -18,6 +18,9 @@
  */
 package org.apache.fineract.infrastructure.bulkimport.populator;
 
+import org.apache.fineract.infrastructure.bulkimport.constants.ClientPersonConstants;
+import org.apache.fineract.infrastructure.bulkimport.constants.LoanConstants;
+import org.apache.fineract.infrastructure.codes.data.CodeValueData;
 import org.apache.fineract.organisation.office.data.OfficeData;
 import org.apache.fineract.portfolio.client.data.ClientData;
 import org.apache.fineract.portfolio.group.data.GroupGeneralData;
@@ -113,7 +116,7 @@ public abstract class AbstractWorkbookPopulator implements WorkbookPopulator {
 
   protected void setClientAndGroupDateLookupTable(Sheet sheet, List<ClientData> clients,
             List<GroupGeneralData> groups, int nameCol, int activationDateCol,boolean containsClientExtId,
-          String dateFormat) {
+          String dateFormat, List<CodeValueData> loanPurpose) {
             Workbook workbook = sheet.getWorkbook();
             CellStyle dateCellStyle = workbook.createCellStyle();
             short df = workbook.createDataFormat().getFormat(dateFormat);
@@ -142,17 +145,26 @@ public abstract class AbstractWorkbookPopulator implements WorkbookPopulator {
 
                     }
             }
-            if (groups!=null){
-                for (GroupGeneralData group : groups) {
+//            if (groups!=null){
+//                for (GroupGeneralData group : groups) {
+//                    Row row = sheet.getRow(++rowIndex);
+//                    if (row == null)
+//                        row = sheet.createRow(rowIndex);
+//                    writeString(nameCol, row, group.getName().replaceAll("[ )(] ", "_"));
+//
+//                    date = inputFormat.parse(group.getActivationDate().toString());
+//                    writeDate(activationDateCol, row, outputFormat.format(date), dateCellStyle,dateFormat);
+//                    }
+//                }
+            if (loanPurpose != null) {
+                rowIndex = 0;
+                for (CodeValueData loanPurposeCodeValue: loanPurpose) {
                     Row row = sheet.getRow(++rowIndex);
-                    if (row == null)
+                    if(row == null)
                         row = sheet.createRow(rowIndex);
-                    writeString(nameCol, row, group.getName().replaceAll("[ )(] ", "_"));
-
-                    date = inputFormat.parse(group.getActivationDate().toString());
-                    writeDate(activationDateCol, row, outputFormat.format(date), dateCellStyle,dateFormat);
-                    }
+                    writeString(LoanConstants.LOOKUP_LOAN_PURPOSE_COL,row,loanPurposeCodeValue.getName()+"-"+loanPurposeCodeValue.getId());
                 }
+            }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
