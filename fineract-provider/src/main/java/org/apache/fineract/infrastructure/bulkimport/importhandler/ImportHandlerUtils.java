@@ -117,6 +117,9 @@ public class ImportHandlerUtils {
         Cell c = row.getCell(colIndex);
         // For external ID
         if(colIndex ==  5) {
+            if (c == null) {
+                return null;
+            }
            c.setCellType(1);
           
         }
