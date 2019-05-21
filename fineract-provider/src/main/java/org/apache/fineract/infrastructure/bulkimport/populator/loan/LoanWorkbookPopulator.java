@@ -399,8 +399,8 @@ public class LoanWorkbookPopulator extends AbstractWorkbookPopulator {
 		for (Integer rowNo = 1; rowNo < 1000; rowNo++) {
 			Row row = worksheet.createRow(rowNo);
 			writeFormula(LoanConstants.CLIENT_EXTERNAL_ID, row,
-					"IF(ISERROR(VLOOKUP($C"+(rowNo+1)+",$AR$2:$AS$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE))," +
-							"\"\",(VLOOKUP($C"+(rowNo+1)+",$AR$2:$AS$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE)))");
+					"IF(ISERROR(VLOOKUP($D"+(rowNo+1)+",$AS$2:$AT$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE))," +
+							"\"\",(VLOOKUP($C"+(rowNo+1)+",$AS$2:$AT$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE)))");
 			writeFormula(LoanConstants.FUND_NAME_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1)
 					+ "))),\"\",INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1) + ")))");
 			writeFormula(LoanConstants.PRINCIPAL_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"PRINCIPAL_\",$F" + (rowNo + 1)
