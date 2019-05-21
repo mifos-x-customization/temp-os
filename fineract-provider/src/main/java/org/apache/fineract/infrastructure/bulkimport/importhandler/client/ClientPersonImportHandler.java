@@ -57,7 +57,7 @@ public class ClientPersonImportHandler implements ImportHandler {
 
     private Workbook workbook;
     private List<ClientData> clients;
-    private Collection<ClientIdentifierCommand> identifier = new ArrayList<>();
+    private Collection<ClientIdentifierCommand> identifier;
    
 
     private final PortfolioCommandSourceWritePlatformService commandsSourceWritePlatformService;
@@ -74,6 +74,7 @@ public class ClientPersonImportHandler implements ImportHandler {
     public Count process(Workbook workbook, String locale, String dateFormat) {
         this.workbook = workbook;
         this.clients=new ArrayList<>();
+        this.identifier = new ArrayList<>();
         readExcelFile(locale,dateFormat);
         return importEntity(dateFormat);
     }
@@ -199,7 +200,7 @@ public class ClientPersonImportHandler implements ImportHandler {
                      Long rationid = null;
                      
                      if (codes != null) {
-                        this.identifier.clear();
+          
                          for (CodeValueData code : codes) {
                              if (voterId != null) {
                                  if (code.getName().equals("Voter Id")) {

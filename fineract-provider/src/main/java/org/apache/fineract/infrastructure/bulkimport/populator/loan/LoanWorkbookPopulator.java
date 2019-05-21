@@ -168,20 +168,20 @@ public class LoanWorkbookPopulator extends AbstractWorkbookPopulator {
 		DataValidationConstraint paymentTypeConstraint = validationHelper.createFormulaListConstraint("PaymentTypes");
 		DataValidationConstraint fundNameConstraint = validationHelper.createFormulaListConstraint("Funds");
 		DataValidationConstraint principalConstraint = validationHelper.createDecimalConstraint(
-				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_PRINCIPAL_\",$E1))",
-				"=INDIRECT(CONCATENATE(\"MAX_PRINCIPAL_\",$E1))");
+				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_PRINCIPAL_\",$F1))",
+				"=INDIRECT(CONCATENATE(\"MAX_PRINCIPAL_\",$F1))");
 		DataValidationConstraint noOfRepaymentsConstraint = validationHelper.createIntegerConstraint(
-				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_REPAYMENT_\",$E1))",
-				"=INDIRECT(CONCATENATE(\"MAX_REPAYMENT_\",$E1))");
+				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_REPAYMENT_\",$F1))",
+				"=INDIRECT(CONCATENATE(\"MAX_REPAYMENT_\",$F1))");
 		DataValidationConstraint frequencyConstraint = validationHelper
 				.createExplicitListConstraint(new String[] { "Days", "Weeks", "Months" });
 		DataValidationConstraint loanTermConstraint = validationHelper
 				.createIntegerConstraint(DataValidationConstraint.OperatorType.GREATER_OR_EQUAL, "=$M1*$N1", null);
 		DataValidationConstraint interestFrequencyConstraint = validationHelper
-				.createFormulaListConstraint("INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$E1))");
+				.createFormulaListConstraint("INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$F1))");
 		DataValidationConstraint interestConstraint = validationHelper.createIntegerConstraint(
-				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_INTEREST_\",$E1))",
-				"=INDIRECT(CONCATENATE(\"MAX_INTEREST_\",$E1))");
+				DataValidationConstraint.OperatorType.BETWEEN, "=INDIRECT(CONCATENATE(\"MIN_INTEREST_\",$F1))",
+				"=INDIRECT(CONCATENATE(\"MAX_INTEREST_\",$F1))");
 		DataValidationConstraint amortizationConstraint = validationHelper
 				.createExplicitListConstraint(new String[] { "Equal principal payments", "Equal installments" });
 		DataValidationConstraint interestMethodConstraint = validationHelper
@@ -401,43 +401,43 @@ public class LoanWorkbookPopulator extends AbstractWorkbookPopulator {
 			writeFormula(LoanConstants.CLIENT_EXTERNAL_ID, row,
 					"IF(ISERROR(VLOOKUP($C"+(rowNo+1)+",$AR$2:$AS$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE))," +
 							"\"\",(VLOOKUP($C"+(rowNo+1)+",$AR$2:$AS$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE)))");
-			writeFormula(LoanConstants.FUND_NAME_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"FUND_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"FUND_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.PRINCIPAL_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"PRINCIPAL_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"PRINCIPAL_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.REPAID_EVERY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"REPAYMENT_EVERY_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"REPAYMENT_EVERY_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.REPAID_EVERY_FREQUENCY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"REPAYMENT_FREQUENCY_\",$E"
-					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"REPAYMENT_FREQUENCY_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.NO_OF_REPAYMENTS_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"NO_REPAYMENT_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"NO_REPAYMENT_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.LOAN_TERM_COL, row, "IF(ISERROR($M" + (rowNo + 1) + "*$N" + (rowNo + 1) + "),\"\",$M"
-					+ (rowNo + 1) + "*$N" + (rowNo + 1) + ")");
-			writeFormula(LoanConstants.LOAN_TERM_FREQUENCY_COL, row, "$O" + (rowNo + 1));
+			writeFormula(LoanConstants.FUND_NAME_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.PRINCIPAL_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"PRINCIPAL_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"PRINCIPAL_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.REPAID_EVERY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"REPAYMENT_EVERY_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"REPAYMENT_EVERY_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.REPAID_EVERY_FREQUENCY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"REPAYMENT_FREQUENCY_\",$F"
+					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"REPAYMENT_FREQUENCY_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.NO_OF_REPAYMENTS_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"NO_REPAYMENT_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"NO_REPAYMENT_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.LOAN_TERM_COL, row, "IF(ISERROR($N" + (rowNo + 1) + "*$O" + (rowNo + 1) + "),\"\",$N"
+					+ (rowNo + 1) + "*$O" + (rowNo + 1) + ")");
+			writeFormula(LoanConstants.LOAN_TERM_FREQUENCY_COL, row, "$P" + (rowNo + 1));
 			writeFormula(LoanConstants.NOMINAL_INTEREST_RATE_FREQUENCY_COL, row,
-					"IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$E" + (rowNo + 1)
-							+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.NOMINAL_INTEREST_RATE_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_\",$E"
-					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.AMORTIZATION_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"AMORTIZATION_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"AMORTIZATION_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.INTEREST_METHOD_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_TYPE_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_TYPE_\",$E" + (rowNo + 1) + ")))");
+					"IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$F" + (rowNo + 1)
+							+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_FREQUENCY_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.NOMINAL_INTEREST_RATE_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_\",$F"
+					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.AMORTIZATION_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"AMORTIZATION_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"AMORTIZATION_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.INTEREST_METHOD_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_TYPE_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_TYPE_\",$F" + (rowNo + 1) + ")))");
 			writeFormula(LoanConstants.INTEREST_CALCULATION_PERIOD_COL, row,
-					"IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_CALCULATION_\",$E" + (rowNo + 1)
-							+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_CALCULATION_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.ARREARS_TOLERANCE_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"ARREARS_TOLERANCE_\",$E"
-					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"ARREARS_TOLERANCE_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.REPAYMENT_STRATEGY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"STRATEGY_\",$E" + (rowNo + 1)
-					+ "))),\"\",INDIRECT(CONCATENATE(\"STRATEGY_\",$E" + (rowNo + 1) + ")))");
-			writeFormula(LoanConstants.GRACE_ON_PRINCIPAL_PAYMENT_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_PRINCIPAL_\",$E"
-					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"GRACE_PRINCIPAL_\",$E" + (rowNo + 1) + ")))");
+					"IF(ISERROR(INDIRECT(CONCATENATE(\"INTEREST_CALCULATION_\",$F" + (rowNo + 1)
+							+ "))),\"\",INDIRECT(CONCATENATE(\"INTEREST_CALCULATION_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.ARREARS_TOLERANCE_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"ARREARS_TOLERANCE_\",$F"
+					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"ARREARS_TOLERANCE_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.REPAYMENT_STRATEGY_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"STRATEGY_\",$F" + (rowNo + 1)
+					+ "))),\"\",INDIRECT(CONCATENATE(\"STRATEGY_\",$F" + (rowNo + 1) + ")))");
+			writeFormula(LoanConstants.GRACE_ON_PRINCIPAL_PAYMENT_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_PRINCIPAL_\",$F"
+					+ (rowNo + 1) + "))),\"\",INDIRECT(CONCATENATE(\"GRACE_PRINCIPAL_\",$F" + (rowNo + 1) + ")))");
 			writeFormula(LoanConstants.GRACE_ON_INTEREST_PAYMENT_COL, row,
-					"IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_INTEREST_PAYMENT_\",$E" + (rowNo + 1)
-							+ "))),\"\",INDIRECT(CONCATENATE(\"GRACE_INTEREST_PAYMENT_\",$E" + (rowNo + 1) + ")))");
+					"IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_INTEREST_PAYMENT_\",$F" + (rowNo + 1)
+							+ "))),\"\",INDIRECT(CONCATENATE(\"GRACE_INTEREST_PAYMENT_\",$F" + (rowNo + 1) + ")))");
 			writeFormula(LoanConstants.GRACE_ON_INTEREST_CHARGED_COL, row,
-					"IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_INTEREST_CHARGED_\",$E" + (rowNo + 1)
-							+ "))),\"\",INDIRECT(CONCATENATE(\"GRACE_INTEREST_CHARGED_\",$E" + (rowNo + 1) + ")))");
+					"IF(ISERROR(INDIRECT(CONCATENATE(\"GRACE_INTEREST_CHARGED_\",$F" + (rowNo + 1)
+							+ "))),\"\",INDIRECT(CONCATENATE(\"GRACE_INTEREST_CHARGED_\",$F" + (rowNo + 1) + ")))");
 
 		}
 	}
