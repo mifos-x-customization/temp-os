@@ -1532,6 +1532,7 @@ public class LoanAccountData {
         this.repaymentEvery = repaymentEvery;
         this.repaymentFrequencyType = repaymentFrequencyType;
         this.loanTermFrequency = loanTermFrequency;
+        this.loanTermFrequencyType=loanTermFrequencyType;
         this.interestRatePerPeriod = interestRatePerPeriod;
         this.expectedDisbursementDate = expectedDisbursementDate;
         this.amortizationType = amortizationType;

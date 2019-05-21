@@ -18,12 +18,10 @@
  */
 package org.apache.fineract.infrastructure.bulkimport.populator.loan;
 
-import org.apache.fineract.infrastructure.bulkimport.constants.ClientPersonConstants;
 import org.apache.fineract.infrastructure.bulkimport.constants.LoanConstants;
 import org.apache.fineract.infrastructure.bulkimport.constants.TemplatePopulateImportConstants;
 import org.apache.fineract.infrastructure.bulkimport.populator.*;
 import org.apache.fineract.infrastructure.codes.data.CodeValueData;
-import org.apache.fineract.portfolio.client.data.ClientData;
 import org.apache.fineract.portfolio.loanproduct.data.LoanProductData;
 import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -155,9 +153,9 @@ public class LoanWorkbookPopulator extends AbstractWorkbookPopulator {
 				.createFormulaListConstraint("INDIRECT(CONCATENATE(\"Staff_\",$A1))");
 		DataValidationConstraint submittedDateConstraint = validationHelper.createDateConstraint(
 				DataValidationConstraint.OperatorType.BETWEEN,
-				"=IF(INDIRECT(CONCATENATE(\"START_DATE_\",$E1))>VLOOKUP($C1,$AR$2:$AT$"
+				"=IF(INDIRECT(CONCATENATE(\"START_DATE_\",$F1))>VLOOKUP($D1,$AR$2:$AT$"
 						+ (clientSheetPopulator.getClientsSize() + groupSheetPopulator.getGroupsSize() + 1)
-						+ ",3,FALSE),INDIRECT(CONCATENATE(\"START_DATE_\",$E1)),VLOOKUP($C1,$AR$2:$AT$"
+						+ ",3,FALSE),INDIRECT(CONCATENATE(\"START_DATE_\",$F1)),VLOOKUP($D1,$AR$2:$AT$"
 						+ (clientSheetPopulator.getClientsSize() + groupSheetPopulator.getGroupsSize() + 1)
 						+ ",3,FALSE))",
 				"=TODAY()", dateFormat);
@@ -400,7 +398,7 @@ public class LoanWorkbookPopulator extends AbstractWorkbookPopulator {
 			Row row = worksheet.createRow(rowNo);
 			writeFormula(LoanConstants.CLIENT_EXTERNAL_ID, row,
 					"IF(ISERROR(VLOOKUP($D"+(rowNo+1)+",$AS$2:$AT$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE))," +
-							"\"\",(VLOOKUP($C"+(rowNo+1)+",$AS$2:$AT$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE)))");
+							"\"\",(VLOOKUP($D"+(rowNo+1)+",$AS$2:$AT$"+(clientSheetPopulator.getClients().size()+1)+",2,FALSE)))");
 			writeFormula(LoanConstants.FUND_NAME_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1)
 					+ "))),\"\",INDIRECT(CONCATENATE(\"FUND_\",$F" + (rowNo + 1) + ")))");
 			writeFormula(LoanConstants.PRINCIPAL_COL, row, "IF(ISERROR(INDIRECT(CONCATENATE(\"PRINCIPAL_\",$F" + (rowNo + 1)
