@@ -409,12 +409,25 @@ public final class LoanApplicationCommandFromApiJsonHelper {
                 final Type arrayObjectParameterTypeOfMap = new TypeToken<Map<String, Object>>() {}.getType();
                 final Set<String> supportedParameters = new HashSet<>(Arrays.asList("id", "chargeId", "amount", "chargeTimeType",
                         "chargeCalculationType", "dueDate"));
+                
+                
 
                 final JsonArray array = topLevelJsonElement.get("charges").getAsJsonArray();
                 for (int i = 1; i <= array.size(); i++) {
+                    
+                    
 
                     final JsonObject loanChargeElement = array.get(i - 1).getAsJsonObject();
-                    final String arrayObjectJson = this.fromApiJsonHelper.toJson(loanChargeElement);
+                    String arrayObjectJson = this.fromApiJsonHelper.toJson(loanChargeElement);
+                    if (this.fromApiJsonHelper.extractBigDecimalNamed("amountOrPercentage", loanChargeElement, locale) != null) {
+                        // Get the value 
+                         final BigDecimal value = this.fromApiJsonHelper.extractBigDecimalNamed("amountOrPercentage", loanChargeElement, locale);
+                         // Now we remove the value 
+                         loanChargeElement.getAsJsonObject().remove("amountOrPercentage");
+                         loanChargeElement.getAsJsonObject().addProperty("amount", value);
+                         arrayObjectJson =  this.fromApiJsonHelper.toJson(loanChargeElement);
+                         
+                     }
                     this.fromApiJsonHelper.checkForUnsupportedParameters(arrayObjectParameterTypeOfMap, arrayObjectJson,
                             supportedParameters);
 
