@@ -59,6 +59,9 @@ import org.apache.fineract.portfolio.calendar.domain.Calendar;
 import org.apache.fineract.portfolio.calendar.exception.CalendarNotFoundException;
 import org.apache.fineract.portfolio.calendar.service.CalendarReadPlatformService;
 import org.apache.fineract.portfolio.charge.domain.Charge;
+import org.apache.fineract.portfolio.charge.domain.ChargeCalculationType;
+import org.apache.fineract.portfolio.charge.domain.ChargePaymentMode;
+import org.apache.fineract.portfolio.charge.domain.ChargeTimeType;
 import org.apache.fineract.portfolio.client.domain.AccountNumberGenerator;
 import org.apache.fineract.portfolio.client.domain.Client;
 import org.apache.fineract.portfolio.client.domain.ClientRepositoryWrapper;
@@ -275,6 +278,34 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final Loan newLoanApplication = this.loanAssembler.assembleFrom(command, currentUser);
 
             validateSubmittedOnDate(newLoanApplication);
+            
+            if (newLoanApplication.charges().isEmpty()) {
+                List<Charge> charges = loanProduct.getLoanProductCharges();
+                
+                for(Charge charge: charges) {
+                    /**
+                     * Set the data strucure
+                     * 
+                     */
+                    
+                    
+                    ChargeTimeType chargeTime = ChargeTimeType.fromInt(charge.getChargeTimeType());
+                    ChargeCalculationType calculationType = ChargeCalculationType.fromInt(charge.getChargeCalculation());
+                    ChargePaymentMode chargePaymentMode = ChargePaymentMode.fromInt(charge.getChargePaymentMode());
+                    
+                    LoanCharge chargeTo = LoanCharge.createNewWithoutLoan(charge, newLoanApplication.getProposedPrincipal(), charge.getAmount(), chargeTime, calculationType, null, chargePaymentMode, null);
+
+                    newLoanApplication.addLoanCharge(chargeTo);
+                }
+                
+            }
+            
+            
+            /**
+             * Get charges by making sure its not from command.
+             */
+            
+           
 
             final LoanProductRelatedDetail productRelatedDetail = newLoanApplication.repaymentScheduleDetail();
 

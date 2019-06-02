@@ -418,16 +418,8 @@ public final class LoanApplicationCommandFromApiJsonHelper {
                     
 
                     final JsonObject loanChargeElement = array.get(i - 1).getAsJsonObject();
-                    String arrayObjectJson = this.fromApiJsonHelper.toJson(loanChargeElement);
-                    if (this.fromApiJsonHelper.extractBigDecimalNamed("amountOrPercentage", loanChargeElement, locale) != null) {
-                        // Get the value 
-                         final BigDecimal value = this.fromApiJsonHelper.extractBigDecimalNamed("amountOrPercentage", loanChargeElement, locale);
-                         // Now we remove the value 
-                         loanChargeElement.getAsJsonObject().remove("amountOrPercentage");
-                         loanChargeElement.getAsJsonObject().addProperty("amount", value);
-                         arrayObjectJson =  this.fromApiJsonHelper.toJson(loanChargeElement);
-                         
-                     }
+                    final  String arrayObjectJson = this.fromApiJsonHelper.toJson(loanChargeElement);
+                   
                     this.fromApiJsonHelper.checkForUnsupportedParameters(arrayObjectParameterTypeOfMap, arrayObjectJson,
                             supportedParameters);
 
