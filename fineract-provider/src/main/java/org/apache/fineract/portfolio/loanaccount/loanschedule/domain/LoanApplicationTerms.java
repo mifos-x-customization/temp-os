@@ -915,7 +915,9 @@ public final class LoanApplicationTerms {
                 if (this.principal.getAmount().equals(new BigDecimal(5500))) {
                     XtotalRepaymentsWithCapitalPayment = new BigDecimal(15.70);
                 }
-                
+                if (XtotalRepaymentsWithCapitalPayment.equals(new BigDecimal(0))) {
+                    XtotalRepaymentsWithCapitalPayment = new BigDecimal(totalRepaymentsWithCapitalPayment);
+                }
         	principalPerPeriod = this.principal.minus(totalPrincipalAccounted).dividedBy(XtotalRepaymentsWithCapitalPayment, mc.getRoundingMode()).plus(
                     this.adjustPrincipalForFlatLoans);
         	if (isPrincipalGraceApplicableForThisPeriod(periodNumber)) {
