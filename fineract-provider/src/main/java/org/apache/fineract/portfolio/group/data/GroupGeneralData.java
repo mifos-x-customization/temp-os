@@ -315,6 +315,10 @@ public class GroupGeneralData {
     public Long getParentId() {
         return this.centerId;
     }
+    
+    public Boolean isActive() {
+        return this.active;
+    }
 
     public static GroupGeneralData updateSelectedRole(final GroupGeneralData grouping, final GroupRoleData selectedRole) {
         return new GroupGeneralData(grouping.id, grouping.accountNo, grouping.name, grouping.externalId, grouping.status, grouping.activationDate,

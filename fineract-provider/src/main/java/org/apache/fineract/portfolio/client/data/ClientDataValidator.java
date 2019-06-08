@@ -194,6 +194,15 @@ public final class ClientDataValidator {
             final Integer genderId = this.fromApiJsonHelper.extractIntegerSansLocaleNamed(ClientApiConstants.genderIdParamName, element);
             baseDataValidator.reset().parameter(ClientApiConstants.genderIdParamName).value(genderId).notNull().integerGreaterThanZero();
         }
+        
+        if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.clientCharacterIdParamName, element)) {
+            final Integer characterId = this.fromApiJsonHelper.extractIntegerSansLocaleNamed(ClientApiConstants.clientCharacterIdParamName, element);
+            baseDataValidator.reset().parameter(ClientApiConstants.clientCharacterIdParamName).value(characterId).notNull().integerGreaterThanZero();
+        }
+        if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.clientRoleIdParamName, element)) {
+            final Integer roleId = this.fromApiJsonHelper.extractIntegerSansLocaleNamed(ClientApiConstants.clientRoleIdParamName, element);
+            baseDataValidator.reset().parameter(ClientApiConstants.clientRoleIdParamName).value(roleId).notNull().integerGreaterThanZero();
+        }
 
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.clientTypeIdParamName, element)) {
             final Integer clientType = this.fromApiJsonHelper.extractIntegerSansLocaleNamed(ClientApiConstants.clientTypeIdParamName,

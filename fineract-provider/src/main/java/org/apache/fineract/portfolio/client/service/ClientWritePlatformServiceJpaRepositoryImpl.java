@@ -44,6 +44,8 @@ import org.apache.fineract.infrastructure.configuration.service.ConfigurationRea
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuilder;
+import org.apache.fineract.infrastructure.core.exception.GeneralPlatformDomainRuleException;
+import org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException;
 import org.apache.fineract.infrastructure.core.exception.PlatformDataIntegrityException;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
 import org.apache.fineract.infrastructure.dataqueries.data.EntityTables;
@@ -56,6 +58,7 @@ import org.apache.fineract.organisation.staff.domain.Staff;
 import org.apache.fineract.organisation.staff.domain.StaffRepositoryWrapper;
 import org.apache.fineract.portfolio.address.service.AddressWritePlatformService;
 import org.apache.fineract.portfolio.client.api.ClientApiConstants;
+import org.apache.fineract.portfolio.client.data.ClientData;
 import org.apache.fineract.portfolio.client.data.ClientDataValidator;
 import org.apache.fineract.portfolio.client.data.ClientIdentifierData;
 import org.apache.fineract.portfolio.client.domain.AccountNumberGenerator;
@@ -76,8 +79,12 @@ import org.apache.fineract.portfolio.common.BusinessEventNotificationConstants.B
 import org.apache.fineract.portfolio.common.service.BusinessEventNotifierService;
 import org.apache.fineract.portfolio.group.domain.Group;
 import org.apache.fineract.portfolio.group.domain.GroupRepository;
+import org.apache.fineract.portfolio.group.domain.GroupRepositoryWrapper;
+import org.apache.fineract.portfolio.group.domain.GroupRole;
+import org.apache.fineract.portfolio.group.domain.GroupRoleRepository;
 import org.apache.fineract.portfolio.group.exception.GroupMemberCountNotInPermissibleRangeException;
 import org.apache.fineract.portfolio.group.exception.GroupNotFoundException;
+import org.apache.fineract.portfolio.group.service.GroupReadPlatformService;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanRepositoryWrapper;
 import org.apache.fineract.portfolio.note.domain.Note;
@@ -135,6 +142,9 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
     private final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService;
     private final ClientIdentifierWritePlatformService clientIdentifierRepo;
     private final CodeValueReadPlatformService codeValue;
+    private final ClientReadPlatformService clientReadPlatform;
+    private final GroupRepositoryWrapper groupRepositoryWrapper;
+    private final GroupRoleRepository groupRoleRepostory;
     @Autowired
     public ClientWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
             final ClientRepositoryWrapper clientRepository, final ClientNonPersonRepositoryWrapper clientNonPersonRepository,
@@ -149,7 +159,9 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final ConfigurationReadPlatformService configurationReadPlatformService,
             final AddressWritePlatformService addressWritePlatformService, final ClientFamilyMembersWritePlatformService clientFamilyMembersWritePlatformService, final BusinessEventNotifierService businessEventNotifierService,
             final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService, final ClientIdentifierWritePlatformService clientIdentifierRepo , 
-            final CodeValueReadPlatformService codeValue) {
+            final CodeValueReadPlatformService codeValue, 
+            final ClientReadPlatformService clientReadPlatform,
+            final GroupRepositoryWrapper groupRepositoryWrapper, final GroupRoleRepository groupRoleRepository) {
         this.context = context;
         this.clientRepository = clientRepository;
         this.clientNonPersonRepository = clientNonPersonRepository;
@@ -175,6 +187,10 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
         this.entityDatatableChecksWritePlatformService = entityDatatableChecksWritePlatformService;
         this.clientIdentifierRepo = clientIdentifierRepo;
         this.codeValue = codeValue;
+        this.clientReadPlatform = clientReadPlatform;
+        this.groupRepositoryWrapper = groupRepositoryWrapper;
+        this.groupRoleRepostory = groupRoleRepository;
+        
     }
 
     @Transactional
@@ -278,6 +294,35 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 clientType = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.CLIENT_TYPE,
                         clientTypeId);
             }
+            
+            CodeValue clientCharacter = null;
+            final Long clientCharacterId = command.longValueOfParameterNamed(ClientApiConstants.clientCharacterIdParamName);
+            if(clientCharacterId != null) {
+                clientCharacter = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.CHRACTER, clientCharacterId);
+            }
+            
+            CodeValue clientRole = null;
+            final Long clientRoleId = command.longValueOfParameterNamed(ClientApiConstants.clientRoleIdParamName);
+            if(clientRoleId != null) {
+                clientRole = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.CLIENT_ROLES, clientRoleId);
+                // We create this inside the commite.
+                if (clientRole.label().contentEquals("Leader") || clientRole.label().contentEquals("Sub Leader")){
+                    // We create the JSON command to send it to the createRole.
+                    // First check how many existing leaders/subleader are there in a group..
+                    Collection<ClientData> datas = this.clientReadPlatform.retrieveActiveClientMembersOfGroup(groupId);
+                    for (ClientData data: datas) {
+                        if (data.getClientRole().getName().contentEquals("Leader")) {
+                            throw new GeneralPlatformDomainRuleException("This group cannot have more then one leaders", "This group cannot have more then one leaders");
+                        }
+                        if (data.getClientRole().getName().contentEquals("Sub Leader")) {
+                            throw new GeneralPlatformDomainRuleException("This group cannot have more then one sub-leader",  "This group cannot have more then one leaders");
+                        }
+                    }
+                   
+                    
+                }
+                
+            }
 
             CodeValue clientClassification = null;
             final Long clientClassificationId = command.longValueOfParameterNamed(ClientApiConstants.clientClassificationIdParamName);
@@ -307,8 +352,24 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             }
             
             final Client newClient = Client.createNew(currentUser, clientOffice, clientParentGroup, staff, savingsProductId, gender,
-                    clientType, clientClassification, legalFormValue, command);
+                    clientType, clientClassification,clientCharacter, clientRole, legalFormValue, command);
             this.clientRepository.save(newClient);
+            
+            // Now we do the leader 
+            
+            if (clientRole.label().contentEquals("Leader")) {
+                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(24L);
+                final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
+                final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
+                this.groupRoleRepostory.save(groupRole);
+            }
+            if (clientRole.label().contentEquals("Sub Leader")) {
+                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(17L);
+                final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
+                final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
+                this.groupRoleRepostory.save(groupRole);
+                
+            }
             boolean rollbackTransaction = false;
             if (newClient.isActive()) {
                 validateParentGroupRulesBeforeClientActivation(newClient);

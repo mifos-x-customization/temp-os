@@ -36,6 +36,7 @@ import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuilder;
 import org.apache.fineract.infrastructure.core.exception.GeneralPlatformDomainRuleException;
+import org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException;
 import org.apache.fineract.infrastructure.core.exception.PlatformDataIntegrityException;
 import org.apache.fineract.infrastructure.dataqueries.data.EntityTables;
 import org.apache.fineract.infrastructure.dataqueries.data.StatusEnum;
@@ -55,6 +56,7 @@ import org.apache.fineract.portfolio.client.service.LoanStatusMapper;
 import org.apache.fineract.portfolio.common.BusinessEventNotificationConstants;
 import org.apache.fineract.portfolio.common.service.BusinessEventNotifierService;
 import org.apache.fineract.portfolio.group.api.GroupingTypesApiConstants;
+import org.apache.fineract.portfolio.group.data.GroupGeneralData;
 import org.apache.fineract.portfolio.group.domain.*;
 import org.apache.fineract.portfolio.group.exception.*;
 import org.apache.fineract.portfolio.group.serialization.GroupingTypesDataValidator;
@@ -100,6 +102,7 @@ public class GroupingTypesWritePlatformServiceJpaRepositoryImpl implements Group
     private final AccountNumberGenerator accountNumberGenerator;
     private final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService;
     private final BusinessEventNotifierService businessEventNotifierService;
+    private final CenterReadPlatformService centerReadPlatformService;
 
     @Autowired
     public GroupingTypesWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
@@ -112,7 +115,7 @@ public class GroupingTypesWritePlatformServiceJpaRepositoryImpl implements Group
             final LoanRepositoryWrapper loanRepositoryWrapper, 
             final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository, final AccountNumberGenerator accountNumberGenerator,
             final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService,
-            final BusinessEventNotifierService businessEventNotifierService) {
+            final BusinessEventNotifierService businessEventNotifierService, final CenterReadPlatformService centerReadPlatformService) {
         this.context = context;
         this.groupRepository = groupRepository;
         this.clientRepositoryWrapper = clientRepositoryWrapper;
@@ -131,6 +134,7 @@ public class GroupingTypesWritePlatformServiceJpaRepositoryImpl implements Group
         this.accountNumberGenerator = accountNumberGenerator;
         this.entityDatatableChecksWritePlatformService = entityDatatableChecksWritePlatformService;
         this.businessEventNotifierService = businessEventNotifierService;
+        this.centerReadPlatformService = centerReadPlatformService;
     }
 
     private CommandProcessingResult createGroupingType(final JsonCommand command, final GroupTypes groupingType, final Long centerId) {
@@ -288,7 +292,18 @@ public class GroupingTypesWritePlatformServiceJpaRepositoryImpl implements Group
         } else {
             this.fromApiJsonDeserializer.validateForCreateGroup(command);
         }
-
+        
+        // We find the existing Groups associated to this center and then we send them a Validation Errors
+        
+        Collection<GroupGeneralData> groups = this.centerReadPlatformService.retrieveAssociatedGroups(centerId);
+        
+        for (GroupGeneralData group: groups) {
+             if (group.isActive()) {
+                 this.logger.info("Do not allow to associate loan", centerId);
+                 throw new GeneralPlatformDomainRuleException("This center has active group by" + group.getName() +  "You can only add one at a time", "This center has active group by" + group.getName() +  "You can only add one at a time");
+             };
+        }
+        
         CommandProcessingResult commandProcessingResult = createGroupingType(command, GroupTypes.GROUP, centerId);
 
         this.businessEventNotifierService.notifyBusinessEventWasExecuted(BusinessEventNotificationConstants.BUSINESS_EVENTS.GROUPS_CREATE,

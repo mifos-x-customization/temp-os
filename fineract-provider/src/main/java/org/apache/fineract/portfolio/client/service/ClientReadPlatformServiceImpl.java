@@ -149,6 +149,12 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         }
         final List<CodeValueData> genderOptions = new ArrayList<>(
                 this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.GENDER));
+        
+        final List<CodeValueData> clientCharacterOptions = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.CHRACTER));
+        
+        final List<CodeValueData> clientRoleOptions = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.CLIENT_ROLES));
 
         final List<CodeValueData> clientTypeOptions = new ArrayList<>(
                 this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.CLIENT_TYPE));
@@ -170,7 +176,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         return ClientData.template(defaultOfficeId, new LocalDate(), offices, staffOptions, null, genderOptions, savingsProductDatas,
                 clientTypeOptions, clientClassificationOptions, clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions,
                                 clientLegalFormOptions, familyMemberOptions, new ArrayList<AddressData>(Arrays.asList(address)),
-                                isAddressEnabled, datatableTemplates);
+                                isAddressEnabled, datatableTemplates,clientCharacterOptions,clientRoleOptions);
         }
 
     @Override
@@ -370,6 +376,10 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             sqlBuilder.append("c.date_of_birth as dateOfBirth, ");
             sqlBuilder.append("c.gender_cv_id as genderId, ");
             sqlBuilder.append("cv.code_value as genderValue, ");
+            sqlBuilder.append("c.client_character_cv_id as clientCharacterId, ");
+            sqlBuilder.append("c.client_role_cv_id as clientRoleId, ");
+            sqlBuilder.append("cvch.code_value as clientCharacterValue, ");
+            sqlBuilder.append("cvcr.code_value as clientRoleValue, ");
             sqlBuilder.append("c.client_type_cv_id as clienttypeId, ");
             sqlBuilder.append("cvclienttype.code_value as clienttypeValue, ");
             sqlBuilder.append("c.client_classification_cv_id as classificationId, ");
@@ -419,6 +429,9 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             sqlBuilder.append("left join m_code_value cvSubStatus on cvSubStatus.id = c.sub_status ");
             sqlBuilder.append("left join m_code_value cvConstitution on cvConstitution.id = cnp.constitution_cv_id ");
             sqlBuilder.append("left join m_code_value cvMainBusinessLine on cvMainBusinessLine.id = cnp.main_business_line_cv_id ");
+            sqlBuilder.append("left join m_code_value cvch on cvch.id = c.client_character_cv_id ");
+            sqlBuilder.append("left join m_code_value cvcr on cvcr.id = c.client_role_cv_id ");
+            
 
             this.schema = sqlBuilder.toString();
         }
@@ -465,6 +478,16 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final Long clienttypeId = JdbcSupport.getLong(rs, "clienttypeId");
             final String clienttypeValue = rs.getString("clienttypeValue");
             final CodeValueData clienttype = CodeValueData.instance(clienttypeId, clienttypeValue);
+            
+            final Long clientCharacterId = JdbcSupport.getLong(rs, "clientCharacterId");
+            final String clientCharacterValue = rs.getString("clientCharacterValue");
+            final CodeValueData character = CodeValueData.instance(clientCharacterId, clientCharacterValue);
+            
+            
+            final Long clientRoleId = JdbcSupport.getLong(rs, "clientRoleId");
+            final String clientRoleValue = rs.getString("clientRoleValue");
+            final CodeValueData clientRole = CodeValueData.instance(clientRoleId, clientRoleValue);
+
 
             final Long classificationId = JdbcSupport.getLong(rs, "classificationId");
             final String classificationValue = rs.getString("classificationValue");
@@ -518,7 +541,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             return ClientData.instance(accountNo, status, subStatus, officeId, officeName, transferToOfficeId, transferToOfficeName, id,
                     firstname, middlename, lastname, fullname, displayName, externalId, mobileNo, emailAddress, dateOfBirth, gender, activationDate,
                     imageId, staffId, staffName, timeline, savingsProductId, savingsProductName, savingsAccountId, clienttype,
-                    classification, legalForm, clientNonPerson, isStaff);
+                    classification, legalForm, clientNonPerson, isStaff,character, clientRole );
 
         }
     }
@@ -556,6 +579,10 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             builder.append("c.date_of_birth as dateOfBirth, ");
             builder.append("c.gender_cv_id as genderId, ");
             builder.append("cv.code_value as genderValue, ");
+            builder.append("c.client_character_cv_id as clientCharacterId, ");
+            builder.append("c.client_role_cv_id as clientRoleId, ");
+            builder.append("cvch.code_value as clientCharacterValue, ");
+            builder.append("cvcr.code_value as clientRoleValue, ");
             builder.append("c.client_type_cv_id as clienttypeId, ");
             builder.append("cvclienttype.code_value as clienttypeValue, ");
             builder.append("c.client_classification_cv_id as classificationId, ");
@@ -604,6 +631,8 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             builder.append("left join m_code_value cvSubStatus on cvSubStatus.id = c.sub_status ");
             builder.append("left join m_code_value cvConstitution on cvConstitution.id = cnp.constitution_cv_id ");
             builder.append("left join m_code_value cvMainBusinessLine on cvMainBusinessLine.id = cnp.main_business_line_cv_id ");
+            builder.append("left join m_code_value cvch on cvch.id = c.client_character_cv_id ");
+            builder.append("left join m_code_value cvcr on cvcr.id = c.client_role_cv_id ");
 
             this.schema = builder.toString();
         }
@@ -626,7 +655,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final boolean isActive = false;
             final CodeValueData subStatus = CodeValueData.instance(subStatusId, subStatusValue, subStatusDesc, isActive);
 
-            final Long officeId = JdbcSupport.getLong(rs, "officeId");
+            final Long officeId = JdbcSupport.getLong(rs, "officeId");  
             final String officeName = rs.getString("officeName");
 
             final Long transferToOfficeId = JdbcSupport.getLong(rs, "transferToOfficeId");
@@ -646,6 +675,15 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             final Long genderId = JdbcSupport.getLong(rs, "genderId");
             final String genderValue = rs.getString("genderValue");
             final CodeValueData gender = CodeValueData.instance(genderId, genderValue);
+            
+            final Long clientCharacterId = JdbcSupport.getLong(rs, "clientCharacterId");
+            final String clientCharacterValue = rs.getString("clientCharacterValue");
+            final CodeValueData character = CodeValueData.instance(clientCharacterId, clientCharacterValue);
+            
+            
+            final Long clientRoleId = JdbcSupport.getLong(rs, "clientRoleId");
+            final String clientRoleValue = rs.getString("clientRoleValue");
+            final CodeValueData clientRole = CodeValueData.instance(clientRoleId, clientRoleValue);
 
             final Long clienttypeId = JdbcSupport.getLong(rs, "clienttypeId");
             final String clienttypeValue = rs.getString("clienttypeValue");
@@ -702,7 +740,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
             return ClientData.instance(accountNo, status, subStatus, officeId, officeName, transferToOfficeId, transferToOfficeName, id,
                     firstname, middlename, lastname, fullname, displayName, externalId, mobileNo, emailAddress, dateOfBirth, gender, activationDate,
                     imageId, staffId, staffName, timeline, savingsProductId, savingsProductName, savingsAccountId, clienttype,
-                    classification, legalForm, clientNonPerson, isStaff);
+                    classification, legalForm, clientNonPerson, isStaff, character, clientRole);
 
         }
     }
@@ -814,7 +852,7 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         final Collection<CodeValueData> clientNonPersonMainBusinessLineOptions = null;
         final List<EnumOptionData> clientLegalFormOptions = null;
         return ClientData.template(null, null, null, null, narrations, null, null, clientTypeOptions, clientClassificationOptions, 
-                        clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions, clientLegalFormOptions,null,null,null, null);
+                        clientNonPersonConstitutionOptions, clientNonPersonMainBusinessLineOptions, clientLegalFormOptions,null,null,null, null,null,null);
     }
 
 }

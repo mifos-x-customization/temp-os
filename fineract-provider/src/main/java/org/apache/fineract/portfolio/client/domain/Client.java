@@ -131,6 +131,15 @@ public final class Client extends AbstractPersistableCustom<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_cv_id", nullable = true)
     private CodeValue gender;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_character_cv_id", nullable = true)
+    private CodeValue clientCharacter;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_role_cv_id", nullable = true)
+    private CodeValue clientRole;
+    
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
@@ -234,6 +243,7 @@ public final class Client extends AbstractPersistableCustom<Long> {
 
     public static Client createNew(final AppUser currentUser, final Office clientOffice, final Group clientParentGroup, final Staff staff,
             final Long savingsProductId, final CodeValue gender, final CodeValue clientType, final CodeValue clientClassification,
+            final CodeValue clientCharacter, final CodeValue clientRole,
             final Integer legalForm, final JsonCommand command) {
 
         final String accountNo = command.stringValueOfParameterNamed(ClientApiConstants.accountNoParamName);
@@ -274,7 +284,7 @@ public final class Client extends AbstractPersistableCustom<Long> {
         final Long savingsAccountId = null;
         return new Client(currentUser, status, clientOffice, clientParentGroup, accountNo, firstname, middlename, lastname, fullname,
                 activationDate, officeJoiningDate, externalId, mobileNo, emailAddress, staff, submittedOnDate, savingsProductId, savingsAccountId, dataOfBirth,
-                gender, clientType, clientClassification, legalForm, isStaff);
+                gender, clientType, clientClassification, legalForm, isStaff, clientCharacter, clientRole);
     }
 
     protected Client() {
@@ -285,7 +295,8 @@ public final class Client extends AbstractPersistableCustom<Long> {
             final String accountNo, final String firstname, final String middlename, final String lastname, final String fullname,
             final LocalDate activationDate, final LocalDate officeJoiningDate, final String externalId, final String mobileNo, final String emailAddress,
             final Staff staff, final LocalDate submittedOnDate, final Long savingsProductId, final Long savingsAccountId,
-            final LocalDate dateOfBirth, final CodeValue gender, final CodeValue clientType, final CodeValue clientClassification, final Integer legalForm, final Boolean isStaff) {
+            final LocalDate dateOfBirth, final CodeValue gender, final CodeValue clientType, final CodeValue clientClassification, final Integer legalForm, final Boolean isStaff, final CodeValue clientCharacter, 
+            final CodeValue clientRole) {
 
         if (StringUtils.isBlank(accountNo)) {
             this.accountNumber = new RandomPasswordGenerator(19).generate();
@@ -359,6 +370,14 @@ public final class Client extends AbstractPersistableCustom<Long> {
 
         if (gender != null) {
             this.gender = gender;
+        }
+        
+        if (clientCharacter !=null ) {
+            this.clientCharacter = clientCharacter;
+        }
+        
+        if (clientRole != null) {
+            this.clientRole = clientRole;
         }
         if (dateOfBirth != null) {
             this.dateOfBirth = dateOfBirth.toDateTimeAtStartOfDay().toDate();
