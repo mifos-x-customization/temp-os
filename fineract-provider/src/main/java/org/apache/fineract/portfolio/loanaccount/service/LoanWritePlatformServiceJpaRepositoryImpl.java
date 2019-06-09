@@ -1309,7 +1309,7 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             }
             loan.addTrancheLoanCharge(chargeDefinition);
         } else {
-            loanCharge = LoanCharge.createNewFromJson(loan, chargeDefinition, command);
+            loanCharge = LoanCharge.createNewFromJson(loan, chargeDefinition, command,null, null);
             this.businessEventNotifierService.notifyBusinessEventToBeExecuted(BUSINESS_EVENTS.LOAN_ADD_CHARGE,
                     constructEntityMap(BUSINESS_ENTITY.LOAN_CHARGE, loanCharge));
 
@@ -2449,8 +2449,20 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
             this.businessEventNotifierService.notifyBusinessEventToBeExecuted(BUSINESS_EVENTS.LOAN_APPLY_OVERDUE_CHARGE,
                     constructEntityMap(BUSINESS_ENTITY.LOAN, loan));
             for (Map.Entry<Integer, LocalDate> entry : scheduleDates.entrySet()) {
-
-                final LoanCharge loanCharge = LoanCharge.createNewFromJson(loan, chargeDefinition, command, entry.getValue());
+                // If there is a fees in installment we add that in fees
+                Money fees = installment.getFeeChargesCharged(loan.getCurrency());
+                Money anotherM = Money.zero(loan.getCurrency());
+                if (entry.getKey().equals(1)) {
+                    anotherM.zero();
+                }else {
+                    for (LoanCharge charge: loan.getLoanCharges()) {
+                        if (charge.isPenaltyCharge()) {
+                            anotherM = anotherM.plus(charge.amount());
+                        }
+                    }
+                }
+                
+                final LoanCharge loanCharge = LoanCharge.createNewFromJson(loan, chargeDefinition, command, entry.getValue(), fees, anotherM);
 
                 LoanOverdueInstallmentCharge overdueInstallmentCharge = new LoanOverdueInstallmentCharge(loanCharge, installment,
                         entry.getKey());

@@ -132,13 +132,14 @@ public class LoanCharge extends AbstractPersistableCustom<Long> {
     @OneToOne(mappedBy = "loancharge", cascade = CascadeType.ALL, optional = true, orphanRemoval = true, fetch = FetchType.EAGER)
     private LoanTrancheDisbursementCharge loanTrancheDisbursementCharge;
 
-    public static LoanCharge createNewFromJson(final Loan loan, final Charge chargeDefinition, final JsonCommand command) {
+    public static LoanCharge createNewFromJson(final Loan loan, final Charge chargeDefinition, final JsonCommand command, Money fees, Money anotherM) {
         final LocalDate dueDate = command.localDateValueOfParameterNamed("dueDate");
-        return createNewFromJson(loan, chargeDefinition, command, dueDate);
+        return createNewFromJson(loan, chargeDefinition, command, dueDate,fees,anotherM );
     }
 
     public static LoanCharge createNewFromJson(final Loan loan, final Charge chargeDefinition, final JsonCommand command,
-            final LocalDate dueDate) {
+            final LocalDate dueDate, Money fees, Money anotherM) {
+                  
         final BigDecimal amount = command.bigDecimalValueOfParameterNamed("amount");
 
         final ChargeTimeType chargeTime = null;
@@ -157,6 +158,13 @@ public class LoanCharge extends AbstractPersistableCustom<Long> {
                 if (command.hasParameter("principal") && command.hasParameter("interest")) {
                     amountPercentageAppliedTo = command.bigDecimalValueOfParameterNamed("principal").add(
                             command.bigDecimalValueOfParameterNamed("interest"));
+                    if (fees !=null ) {
+                        amountPercentageAppliedTo = amountPercentageAppliedTo.add(fees.getAmount());
+                        
+                    }
+                    if (anotherM !=null) {
+                        amountPercentageAppliedTo = amountPercentageAppliedTo.add(anotherM.getAmount());
+                    }
                 } else {
                     amountPercentageAppliedTo = loan.getPrincpal().getAmount().add(loan.getTotalInterest());
                 }
@@ -171,6 +179,8 @@ public class LoanCharge extends AbstractPersistableCustom<Long> {
             default:
             break;
         }
+        
+       
 
         BigDecimal loanCharge = BigDecimal.ZERO;
         if (ChargeTimeType.fromInt(chargeDefinition.getChargeTimeType()).equals(ChargeTimeType.INSTALMENT_FEE)) {
