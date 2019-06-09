@@ -228,6 +228,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final Long clientId = this.fromJsonHelper.extractLongNamed("clientId", command.parsedJson());
                         if(clientId !=null){
                         Client client= this.clientRepository.findOneWithNotFoundDetection(clientId);
+                        checkClientCharacter(client);
                         officeSpecificLoanProductValidation( productId,client.getOffice().getId());
                         }
                         final Long groupId = this.fromJsonHelper.extractLongNamed("groupId", command.parsedJson());
@@ -253,7 +254,9 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                                throw new GeneralPlatformDomainRuleException("This client has currently  active loan "  + loan.getAccountNumber() +  " once  its closed you can open a new loan account", "This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account" );
                            }                       
                        
-                    }                
+                    }    
+                    
+                    
                    
                 
            
@@ -1430,5 +1433,13 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
     
     			}
     		}
+    
+    private void checkClientCharacter(Client client) {
+        if (client.getClientCharacter() != null) {
+            if (client.getClientCharacter().label().contentEquals("Negative")) {
+                throw new GeneralPlatformDomainRuleException("A client with id", + client.getId() + "has negative characterstics, you need to remove the client", "A client with id", + client.getId() + "has negative characterstics, you need to remove the client" );
+            }
+        }
+    }
     
 }

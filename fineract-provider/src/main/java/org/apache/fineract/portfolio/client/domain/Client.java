@@ -991,6 +991,10 @@ public final class Client extends AbstractPersistableCustom<Long> {
     public CodeValue clientType() {
         return this.clientType;
     }
+    
+    public CodeValue getClientCharacter() {
+        return this.clientCharacter;
+    }
 
     public void updateClientType(CodeValue clientType) {
         this.clientType = clientType;

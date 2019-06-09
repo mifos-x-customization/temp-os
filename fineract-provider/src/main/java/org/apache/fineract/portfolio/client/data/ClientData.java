@@ -598,7 +598,7 @@ final public class ClientData implements Comparable<ClientData> {
     }
     
     public CodeValueData getClientRole() {
-        return this.clientCharacter;
+        return this.clientRole;
     }
 
     @Override

@@ -309,10 +309,13 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 if (clientRole.label().contentEquals("Leader") || clientRole.label().contentEquals("Sub Leader")){
                     // We create the JSON command to send it to the createRole.
                     // First check how many existing leaders/subleader are there in a group..
+                    boolean checkForLeader = clientRole.label().contentEquals("Leader");
                     Collection<ClientData> datas = this.clientReadPlatform.retrieveActiveClientMembersOfGroup(groupId);
                     for (ClientData data: datas) {
-                        if (data.getClientRole().getName().contentEquals("Leader")) {
-                            throw new GeneralPlatformDomainRuleException("This group cannot have more then one leaders", "This group cannot have more then one leaders");
+                        if (checkForLeader) {
+                            if (data.getClientRole().getName().contentEquals("Leader")) {
+                                throw new GeneralPlatformDomainRuleException("This group cannot have more then one leaders", "This group cannot have more then one leaders");
+                            }
                         }
                         if (data.getClientRole().getName().contentEquals("Sub Leader")) {
                             throw new GeneralPlatformDomainRuleException("This group cannot have more then one sub-leader",  "This group cannot have more then one leaders");
@@ -356,19 +359,20 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             this.clientRepository.save(newClient);
             
             // Now we do the leader 
-            
+            if (clientRole != null) {
             if (clientRole.label().contentEquals("Leader")) {
-                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(24L);
+                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(clientRoleId);
                 final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
                 final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
                 this.groupRoleRepostory.save(groupRole);
             }
-            if (clientRole.label().contentEquals("Sub Leader")) {
-                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(17L);
-                final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
-                final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
-                this.groupRoleRepostory.save(groupRole);
+                if (clientRole.label().contentEquals("Sub Leader")) {
+                    CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(clientRoleId);
+                    final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
+                    final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
+                    this.groupRoleRepostory.save(groupRole);
                 
+                }
             }
             boolean rollbackTransaction = false;
             if (newClient.isActive()) {
