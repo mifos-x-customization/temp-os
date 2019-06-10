@@ -41,6 +41,8 @@ public class LoanTransactionData {
     private final LoanTransactionEnumData type;
 
     private final LocalDate date;
+    
+    private final Long createdByUserId;
 
     private final CurrencyData currency;
     private final PaymentDetailData paymentDetailData;
