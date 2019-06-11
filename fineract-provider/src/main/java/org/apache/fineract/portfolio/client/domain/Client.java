@@ -1024,6 +1024,10 @@ public final class Client extends AbstractPersistableCustom<Long> {
     public void updateGender(CodeValue gender) {
         this.gender = gender;
     }
+    
+    public void updateCharacter(CodeValue clientChar) {
+        this.clientCharacter = clientChar;
+    }
 
     public Date dateOfBirth() {
         return this.dateOfBirth;

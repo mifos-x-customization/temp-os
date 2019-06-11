@@ -563,6 +563,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 if (newValue != null ) {
                     clientChar = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.CHRACTER, newValue);
                 }
+                clientForUpdate.updateCharacter(clientChar);
             }
 
             if (changes.containsKey(ClientApiConstants.savingsProductIdParamName)) {
