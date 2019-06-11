@@ -19,6 +19,7 @@
 package org.apache.fineract.portfolio.transfer.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResult;
 import org.apache.fineract.infrastructure.core.data.CommandProcessingResultBuilder;
+import org.apache.fineract.infrastructure.core.exception.GeneralPlatformDomainRuleException;
 import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.organisation.office.domain.Office;
 import org.apache.fineract.organisation.office.domain.OfficeRepositoryWrapper;
@@ -122,7 +124,24 @@ public class TransferWritePlatformServiceJpaRepositoryImpl implements TransferWr
         }
 
         final List<Client> clients = assembleListOfClients(jsonCommand);
-
+        
+        for (Client client: clients) {
+    
+            Collection<Loan> loans = this.loanRepositoryWrapper.findActiveLoansByLoanIdAndGroupId(client.getId(), sourceGroupId);
+            
+            // Iterate through loans actually its single 
+            for (Loan loan: loans) {
+                if (loan.isOpen()) {
+                    // hence active 
+                    throw new GeneralPlatformDomainRuleException("The selected client "+ client.getId() +  "has an active loan you cannot transfer this client","The selected client " + client.getId() + "has an active loan you cannot transfer this client");
+                    
+                }
+            }
+            
+            
+            
+            
+        }
         if (sourceGroupId == destinationGroupId) { throw new TransferNotSupportedException(
                 TRANSFER_NOT_SUPPORTED_REASON.SOURCE_AND_DESTINATION_GROUP_CANNOT_BE_SAME, sourceGroupId, destinationGroupId); }
 
