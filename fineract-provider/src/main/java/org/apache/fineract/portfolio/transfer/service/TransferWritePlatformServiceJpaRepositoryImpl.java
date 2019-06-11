@@ -138,9 +138,6 @@ public class TransferWritePlatformServiceJpaRepositoryImpl implements TransferWr
                 }
             }
             
-            
-            
-            
         }
         if (sourceGroupId == destinationGroupId) { throw new TransferNotSupportedException(
                 TRANSFER_NOT_SUPPORTED_REASON.SOURCE_AND_DESTINATION_GROUP_CANNOT_BE_SAME, sourceGroupId, destinationGroupId); }
