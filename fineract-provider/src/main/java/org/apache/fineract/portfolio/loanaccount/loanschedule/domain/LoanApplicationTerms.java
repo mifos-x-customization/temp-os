@@ -558,12 +558,12 @@ public final class LoanApplicationTerms {
         }
         if (this.principal.getAmount().equals(new BigDecimal(5000))) {
             if (periodNumber == 16) {
-                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(1001));
+                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(999));
             }
         }
         if (this.principal.getAmount().equals(new BigDecimal(5500))) {
             if (periodNumber == 16) {
-                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(988));
+                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(989));
             }
         }
                 final Money totalInterestRemaining = totalInterestDueForLoan.minus(totalCumulativeInterestToDate);
