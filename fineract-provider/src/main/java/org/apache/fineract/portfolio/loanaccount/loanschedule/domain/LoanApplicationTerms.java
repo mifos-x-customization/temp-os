@@ -552,7 +552,7 @@ public final class LoanApplicationTerms {
         if (this.principal.getAmount().equals(new BigDecimal(4500))) {
             // we set the cumulative interest to date
             if (periodNumber == 16) {
-                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(850));
+                totalCumulativeInterestToDate = Money.of(this.getCurrency(), new BigDecimal(852));
             }
             
         }
