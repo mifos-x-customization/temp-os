@@ -734,27 +734,31 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
     @Transactional
     @Override
     public CommandProcessingResult makeLoanRepayment(final Long loanId, final JsonCommand command, final boolean isRecoveryRepayment) {
-
         this.loanEventApiJsonValidator.validateNewRepaymentTransaction(command.json());
 
         final LocalDate transactionDate = command.localDateValueOfParameterNamed("transactionDate");
         final BigDecimal transactionAmount = command.bigDecimalValueOfParameterNamed("transactionAmount");
         final String txnExternalId = command.stringValueOfParameterNamedAllowingNull("externalId");
-
+        
+        
+        
         final Map<String, Object> changes = new LinkedHashMap<>();
         changes.put("transactionDate", command.stringValueOfParameterNamed("transactionDate"));
         changes.put("transactionAmount", command.stringValueOfParameterNamed("transactionAmount"));
         changes.put("locale", command.locale());
         changes.put("dateFormat", command.dateFormat());
         changes.put("paymentTypeId", command.stringValueOfParameterNamed("paymentTypeId"));
-
+        
+       
         final String noteText = command.stringValueOfParameterNamed("note");
         if (StringUtils.isNotBlank(noteText)) {
             changes.put("note", noteText);
         }
         final Loan loan = this.loanAssembler.assembleFrom(loanId);
         // I have to check the loan amount it should match the and loan should be closed.
-        if (loan.getLoanSummary().getTotalOutstanding().equals(transactionAmount)) {
+        final boolean isPrepay = command.booleanPrimitiveValueOfParameterNamed("isPrepay");
+        
+        if (isPrepay) {
             //
             if (loan.getClient().getClientRole().label().contains("Leader")) {
                 throw new GeneralPlatformDomainRuleException("Client with Leader role cannot prepay this loan", "Client with leader role cannot prepay this loan", "");
