@@ -572,6 +572,11 @@ public final class Client extends AbstractPersistableCustom<Long> {
             actualChanges.put(ClientApiConstants.clientCharacterIdParamName, newValue);
         }
         
+        if (command.isChangeInLongParameterNamed(ClientApiConstants.clientRoleIdParamName, clientCharacterId())) {
+            final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.clientRoleIdParamName);
+            actualChanges.put(ClientApiConstants.clientRoleIdParamName, newValue);
+        }
+        
 
         if (command.isChangeInLongParameterNamed(ClientApiConstants.savingsProductIdParamName, savingsProductId())) {
             final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.savingsProductIdParamName);

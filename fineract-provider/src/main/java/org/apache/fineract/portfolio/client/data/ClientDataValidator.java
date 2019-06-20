@@ -33,6 +33,7 @@ import org.apache.fineract.infrastructure.configuration.service.ConfigurationRea
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
 import org.apache.fineract.infrastructure.core.data.DataValidatorBuilder;
+import org.apache.fineract.infrastructure.core.exception.GeneralPlatformDomainRuleException;
 import org.apache.fineract.infrastructure.core.exception.InvalidJsonException;
 import org.apache.fineract.infrastructure.core.exception.PlatformApiDataValidationException;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
@@ -45,6 +46,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+
+import sun.java2d.loops.GeneralRenderer;
 
 @Component
 public final class ClientDataValidator {
@@ -148,11 +151,12 @@ public final class ClientDataValidator {
                 baseDataValidator.reset().parameter(ClientApiConstants.idParamName).failWithCode(".no.name.details.passed");
             }
         }
-
+        boolean valueForExternalId = false;
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.externalIdParamName, element)) {
             final String externalId = this.fromApiJsonHelper.extractStringNamed(ClientApiConstants.externalIdParamName, element);
             baseDataValidator.reset().parameter(ClientApiConstants.externalIdParamName).value(externalId)
                     .notExceedingLengthOf(12).minLengthOf(12);
+            valueForExternalId = true;
         }
 
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.mobileNoParamName, element)) {
@@ -160,8 +164,19 @@ public final class ClientDataValidator {
             baseDataValidator.reset().parameter(ClientApiConstants.mobileNoParamName).value(mobileNo).notNull()
                     .notExceedingLengthOf(10);
         }
+        boolean valueForidentifier = false;
+        final JsonArray identifier =  this.fromApiJsonHelper.extractJsonArrayNamed(ClientApiConstants.identifier, element); 
+        if(identifier != null) {
+            valueForidentifier = true;
+            
+        }
         
-        
+        if (valueForExternalId || valueForidentifier) {
+            
+            
+        }else {
+            throw new GeneralPlatformDomainRuleException("Add atleast one type of id key, aadhar, voter, ration", "Add one id key type, aadhar, voter, ration", "Add one id key type, aadhar, voter, ration");
+        }
 
         final Boolean active = this.fromApiJsonHelper.extractBooleanNamed(ClientApiConstants.activeParamName, element);
         if (active != null) {

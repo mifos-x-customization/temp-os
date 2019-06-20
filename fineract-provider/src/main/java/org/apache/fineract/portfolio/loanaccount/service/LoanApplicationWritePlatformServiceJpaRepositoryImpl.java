@@ -221,6 +221,8 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
         try {
             final AppUser currentUser = getAppUserIfPresent();
             boolean isMeetingMandatoryForJLGLoans = configurationDomainService.isMeetingMandatoryForJLGLoans();
+            final Long calendarIdD = command.longValueOfParameterNamed("calendarId");
+            if (calendarIdD == null) { throw new GeneralPlatformDomainRuleException("This group has not meeting assigned, cannot submit loans", "This group has no meeting assigned, cannot submit loans", "This group has not meetings assigned, cannot submit loan");}
             final Long productId = this.fromJsonHelper.extractLongNamed("productId", command.parsedJson());
             final LoanProduct loanProduct = this.loanProductRepository.findOne(productId);
             if (loanProduct == null) { throw new LoanProductNotFoundException(productId); }
