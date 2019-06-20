@@ -1134,6 +1134,19 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
         if (loan.loanProduct().isMultiDisburseLoan()) {
             this.validateMultiDisbursementData(command, expectedDisbursementDate);
         }
+        
+        
+        final List<Loan> loans = this.loanRepositoryWrapper.findLoanByClientId(loan.getClientId());
+        for (final Loan tloan: loans) {
+               // Current loan check with principal
+               if (tloan.isOpen()) {
+                   this.logger.info("Do not allow to create the loan");
+                   throw new GeneralPlatformDomainRuleException("This client has currently  active loan "  + loan.getAccountNumber() +  " once  its closed you can open a new loan account", "This client has currently one active loan "  + loan.getAccountNumber() +  " with same product once its closed you can open a new loan account" );
+               }                       
+           
+        }    
+        
+        
 
         checkClientOrGroupActive(loan);
         Boolean isSkipRepaymentOnFirstMonth = false;

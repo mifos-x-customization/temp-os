@@ -47,7 +47,6 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import sun.java2d.loops.GeneralRenderer;
 
 @Component
 public final class ClientDataValidator {
