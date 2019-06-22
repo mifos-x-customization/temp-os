@@ -359,21 +359,7 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             this.clientRepository.save(newClient);
             
             // Now we do the leader 
-            if (clientRole != null) {
-            if (clientRole.label().contentEquals("Leader")) {
-                CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(clientRoleId);
-                final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
-                final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
-                this.groupRoleRepostory.save(groupRole);
-            }
-                if (clientRole.label().contentEquals("Sub Leader")) {
-                    CodeValue code = this.codeValueRepository.findOneWithNotFoundDetection(clientRoleId);
-                    final Group group = this.groupRepositoryWrapper.findOneWithNotFoundDetection(groupId);
-                    final GroupRole groupRole = GroupRole.createGroupRole(group, newClient, code);
-                    this.groupRoleRepostory.save(groupRole);
-                
-                }
-            }
+           
             boolean rollbackTransaction = false;
             if (newClient.isActive()) {
                 validateParentGroupRulesBeforeClientActivation(newClient);
@@ -565,6 +551,16 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 }
                 clientForUpdate.updateCharacter(clientChar);
             }
+            
+            if (changes.containsKey(ClientApiConstants.clientRoleIdParamName)) {
+                final Long newValue = command.longValueOfParameterNamed(ClientApiConstants.clientRoleIdParamName);
+                CodeValue clientRole = null;
+                if (newValue != null ) {
+                    clientRole = this.codeValueRepository.findOneByCodeNameAndIdWithNotFoundDetection(ClientApiConstants.CLIENT_ROLES, newValue);
+                }
+                clientForUpdate.updateClientRole(clientRole);
+            }
+
 
             if (changes.containsKey(ClientApiConstants.savingsProductIdParamName)) {
                 if (clientForUpdate.isActive()) { throw new ClientActiveForUpdateException(clientId,

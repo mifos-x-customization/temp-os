@@ -1034,6 +1034,10 @@ public final class Client extends AbstractPersistableCustom<Long> {
         this.gender = gender;
     }
     
+    public void updateClientRole(CodeValue clientRole) {
+        this.clientRole = clientRole;
+    }
+    
     public void updateCharacter(CodeValue clientChar) {
         this.clientCharacter = clientChar;
     }
