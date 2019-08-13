@@ -32,7 +32,7 @@ public class ClientApiCollectionConstants extends ClientApiConstants{
                     mobileNoParamName,emailAddressParamName, firstnameParamName, middlenameParamName, lastnameParamName, fullnameParamName, officeIdParamName,
                     activeParamName, activationDateParamName, staffIdParamName, submittedOnDateParamName, savingsProductIdParamName,
                     dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName,
-                    clientNonPersonDetailsParamName, displaynameParamName, legalFormIdParamName, datatables, isStaffParamName, clientCharacterIdParamName,clientRoleIdParamName));
+                    clientNonPersonDetailsParamName, displaynameParamName, legalFormIdParamName, datatables, isStaffParamName, clientCharacterIdParamName,clientRoleIdParamName,clientRoleIdFromImport));
 
     protected static final Set<String> CLIENT_NON_PERSON_CREATE_REQUEST_DATA_PARAMETERS = new HashSet<>(
             Arrays.asList(familyMembers,address,localeParamName, dateFormatParamName, incorpNumberParamName, remarksParamName, incorpValidityTillParamName,

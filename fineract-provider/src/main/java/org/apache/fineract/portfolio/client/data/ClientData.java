@@ -143,7 +143,7 @@ final public class ClientData implements Comparable<ClientData> {
             Long clientClassificationId, Boolean isStaff, Collection<AddressData> address,Collection<ClientIdentifierCommand> identifier, String locale,String dateFormat){
 
         return new ClientData(legalFormId,rowIndex, null, firstName,lastName,middleName,submittedOn,activationDate,active,externalId,
-                officeId,staffId,mobileNo,dob,clientTypeId,null,null,genderId,clientClassificationId,isStaff,address, identifier,null, locale,dateFormat);
+                officeId,staffId,mobileNo,dob,clientTypeId,genderId,null, 25L,clientClassificationId,isStaff,address, identifier,null, locale,dateFormat);
     }
     
     public static ClientData emptyInstance(Long clientId) {

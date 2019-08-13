@@ -119,6 +119,7 @@ public class ClientApiConstants {
     public static final String genderParamName = "gender";
     public static final String clientCharacterIdParamName = "characterId";
     public static final String clientRoleIdParamName = "roleId";
+    public static final String clientRoleIdFromImport = "clientRoleId";
     public static final String clientTypeIdParamName = "clientTypeId";
     public static final String clientTypeParamName = "clientType";
     public static final String clientClassificationIdParamName = "clientClassificationId";
