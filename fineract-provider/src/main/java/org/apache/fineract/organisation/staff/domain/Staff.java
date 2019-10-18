@@ -89,7 +89,7 @@ public class Staff extends AbstractPersistableCustom<Long> {
     @JoinColumn(name = "image_id", nullable = true)
     private Image image;
 
-    public static Staff fromJson(final Office staffOffice, final JsonCommand command) {
+    public static Staff fromJson(final Office staffOffice,final Staff parentStaff, final JsonCommand command) {
 
         final String firstnameParamName = "firstname";
         final String firstname = command.stringValueOfParameterNamed(firstnameParamName);
@@ -102,6 +102,7 @@ public class Staff extends AbstractPersistableCustom<Long> {
 
         final String mobileNoParamName = "mobileNo";
         final String mobileNo = command.stringValueOfParameterNamedAllowingNull(mobileNoParamName);
+        
 
         final String isLoanOfficerParamName = "isLoanOfficer";
         final boolean isLoanOfficer = command.booleanPrimitiveValueOfParameterNamed(isLoanOfficerParamName);
@@ -116,16 +117,17 @@ public class Staff extends AbstractPersistableCustom<Long> {
             joiningDate = command.localDateValueOfParameterNamed(joiningDateParamName);
         }
 
-        return new Staff(staffOffice, firstname, lastname, externalId, mobileNo, isLoanOfficer, isActive, joiningDate);
+        return new Staff(staffOffice, parentStaff,  firstname, lastname, externalId, mobileNo, isLoanOfficer, isActive, joiningDate);
     }
 
     protected Staff() {
         //
     }
 
-    private Staff(final Office staffOffice, final String firstname, final String lastname, final String externalId, final String mobileNo,
+    private Staff(final Office staffOffice,final Staff parentStaff,  final String firstname, final String lastname, final String externalId, final String mobileNo,
             final boolean isLoanOfficer, final Boolean isActive, final LocalDate joiningDate) {
         this.office = staffOffice;
+        this.organisationalRoleParentStaff = parentStaff;
         this.firstname = StringUtils.defaultIfEmpty(firstname, null);
         this.lastname = StringUtils.defaultIfEmpty(lastname, null);
         this.externalId = StringUtils.defaultIfEmpty(externalId, null);

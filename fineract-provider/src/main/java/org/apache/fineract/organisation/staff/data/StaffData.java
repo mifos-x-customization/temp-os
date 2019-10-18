@@ -40,6 +40,9 @@ public class StaffData {
     private final Boolean isLoanOfficer;
     private final Boolean isActive;
     private final LocalDate joiningDate;
+    
+    private final Long parentStaffId;
+    private final String parentStaffname;
 
     //import fields
     private transient Integer rowIndex;
@@ -49,17 +52,18 @@ public class StaffData {
     public static StaffData importInstance(String externalId, String firstName, String lastName, String mobileNo, Long officeId, Boolean isLoanOfficer,
             Boolean isActive, LocalDate joinedOnDate, Integer rowIndex,String locale, String dateFormat){
         return  new StaffData(externalId,firstName,lastName,mobileNo,officeId,isLoanOfficer,isActive,
-                joinedOnDate,rowIndex,locale,dateFormat);
+                joinedOnDate,rowIndex,locale,dateFormat, null);
 
     }
     private StaffData(String externalId, String firstname, String lastname, String mobileNo, Long officeId, Boolean isLoanOfficer,
-            Boolean isActive, LocalDate joiningDate, Integer rowIndex,String locale, String dateFormat) {
+            Boolean isActive, LocalDate joiningDate, Integer rowIndex,String locale, String dateFormat, Long parentStaffId) {
 
         this.externalId = externalId;
         this.firstname = firstname;
         this.lastname = lastname;
         this.mobileNo = mobileNo;
         this.officeId = officeId;
+        this.parentStaffId = parentStaffId;
         this.isLoanOfficer = isLoanOfficer;
         this.isActive = isActive;
         this.joiningDate = joiningDate;
@@ -70,6 +74,7 @@ public class StaffData {
         this.id = null;
         this.officeName = null;
         this.displayName = null;
+        this.parentStaffname = null;
     }
 
     public Integer getRowIndex() {
@@ -81,23 +86,23 @@ public class StaffData {
 
     public static StaffData templateData(final StaffData staff, final Collection<OfficeData> allowedOffices) {
         return new StaffData(staff.id, staff.firstname, staff.lastname, staff.displayName, staff.officeId, staff.officeName,
-                staff.isLoanOfficer, staff.externalId, staff.mobileNo, allowedOffices, staff.isActive, staff.joiningDate);
+                staff.isLoanOfficer, staff.externalId, staff.mobileNo, allowedOffices, staff.isActive, staff.joiningDate, null, null);
     }
 
     public static StaffData lookup(final Long id, final String displayName) {
-        return new StaffData(id, null, null, displayName, null, null, null, null, null, null, null, null);
+        return new StaffData(id, null, null, displayName, null, null, null, null, null, null, null, null, null , null);
     }
 
     public static StaffData instance(final Long id, final String firstname, final String lastname, final String displayName,
             final Long officeId, final String officeName, final Boolean isLoanOfficer, final String externalId, final String mobileNo,
-            final boolean isActive, final LocalDate joiningDate) {
+            final boolean isActive, final LocalDate joiningDate, final Long parentStaffId, final String parentStaffName) {
         return new StaffData(id, firstname, lastname, displayName, officeId, officeName, isLoanOfficer, externalId, mobileNo, null,
-                isActive, joiningDate);
+                isActive, joiningDate,parentStaffId, parentStaffName);
     }
 
     private StaffData(final Long id, final String firstname, final String lastname, final String displayName, final Long officeId,
             final String officeName, final Boolean isLoanOfficer, final String externalId, final String mobileNo,
-            final Collection<OfficeData> allowedOffices, final Boolean isActive, final LocalDate joiningDate) {
+            final Collection<OfficeData> allowedOffices, final Boolean isActive, final LocalDate joiningDate, final Long parentStaffId, final String parentStaffName) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -110,6 +115,8 @@ public class StaffData {
         this.allowedOffices = allowedOffices;
         this.isActive = isActive;
         this.joiningDate = joiningDate;
+        this.parentStaffId = parentStaffId;
+        this.parentStaffname = parentStaffName;
     }
 
     public Long getId() {

@@ -66,9 +66,13 @@ public class StaffWritePlatformServiceJpaRepositoryImpl implements StaffWritePla
             this.fromApiJsonDeserializer.validateForCreate(command.json());
 
             final Long officeId = command.longValueOfParameterNamed("officeId");
-
+            final Long parentStaffId = command.longValueOfParameterNamed("staffId");
+            
+            // Get parentStaff
+            final Staff parentStaff = this.staffRepository.findOne(parentStaffId);
+            
             final Office staffOffice = this.officeRepositoryWrapper.findOneWithNotFoundDetection(officeId);
-            final Staff staff = Staff.fromJson(staffOffice, command);
+            final Staff staff = Staff.fromJson(staffOffice, parentStaff, command);
 
             this.staffRepository.save(staff);
 
