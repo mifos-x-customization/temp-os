@@ -68,8 +68,10 @@ public class StaffWritePlatformServiceJpaRepositoryImpl implements StaffWritePla
             final Long officeId = command.longValueOfParameterNamed("officeId");
             final Long parentStaffId = command.longValueOfParameterNamed("staffId");
             
+            Staff parentStaff = null;
+            if (parentStaffId != null) { parentStaff = this.staffRepository.findOne(parentStaffId); }
             // Get parentStaff
-            final Staff parentStaff = this.staffRepository.findOne(parentStaffId);
+            
             
             final Office staffOffice = this.officeRepositoryWrapper.findOneWithNotFoundDetection(officeId);
             final Staff staff = Staff.fromJson(staffOffice, parentStaff, command);

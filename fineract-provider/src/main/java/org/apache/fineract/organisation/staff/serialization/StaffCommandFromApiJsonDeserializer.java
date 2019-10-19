@@ -83,7 +83,7 @@ public final class StaffCommandFromApiJsonDeserializer {
         baseDataValidator.reset().parameter("lastname").value(lastname).notBlank().notExceedingLengthOf(50);
         
         final Long parentStaffId = this.fromApiJsonHelper.extractLongNamed("staffId", element);
-        baseDataValidator.reset().parameter("staffId").value(parentStaffId).notNull().integerGreaterThanZero();
+        baseDataValidator.reset().parameter("staffId").value(parentStaffId).integerGreaterThanZero();
 
         if (this.fromApiJsonHelper.parameterExists(ClientApiConstants.mobileNoParamName, element)) {
             final String mobileNo = this.fromApiJsonHelper.extractStringNamed(ClientApiConstants.mobileNoParamName, element);

@@ -65,10 +65,8 @@ public class StaffReadPlatformServiceImpl implements StaffReadPlatformService {
         public String schema() {
             return " s.id as id,s.office_id as officeId, o.name as officeName, s.firstname as firstname, s.lastname as lastname,"
                     + " s.display_name as displayName, s.is_loan_officer as isLoanOfficer, s.external_id as externalId, s.mobile_no as mobileNo,"
-                    + " ps.display_name as parentStaffName, ps.id as parentStaffId,"
             		+ " s.is_active as isActive, s.joining_date as joiningDate from m_staff s "
-                    + "  join m_office o on o.id = s.office_id"
-            		+ " inner join m_staff ps on ps.id = s.organisational_role_parent_staff_id";
+                    + "  join m_office o on o.id = s.office_id";
         }
 
         @Override
@@ -79,8 +77,6 @@ public class StaffReadPlatformServiceImpl implements StaffReadPlatformService {
             final String lastname = rs.getString("lastname");
             final String displayName = rs.getString("displayName");
             final Long officeId = rs.getLong("officeId");
-            final Long parentStaffId = rs.getLong("parentStaffId");
-            final String parentStaffName = rs.getString("parentStaffName");
             final boolean isLoanOfficer = rs.getBoolean("isLoanOfficer");
             final String officeName = rs.getString("officeName");
             final String externalId = rs.getString("externalId");
@@ -89,7 +85,7 @@ public class StaffReadPlatformServiceImpl implements StaffReadPlatformService {
             final LocalDate joiningDate = JdbcSupport.getLocalDate(rs, "joiningDate");
 
             return StaffData.instance(id, firstname, lastname, displayName, officeId, officeName, isLoanOfficer, externalId, mobileNo,
-                    isActive, joiningDate, parentStaffId, parentStaffName);
+                    isActive, joiningDate, null, null);
         }
     }
 
